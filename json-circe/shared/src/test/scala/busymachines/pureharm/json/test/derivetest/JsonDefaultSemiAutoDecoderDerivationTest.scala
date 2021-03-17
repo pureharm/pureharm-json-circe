@@ -20,9 +20,9 @@ import org.scalatest.flatspec.AnyFlatSpec
 import busymachines.pureharm.json.implicits._
 import busymachines.pureharm.json.test._
 
-/** Here we test [[busymachines.pureharm.json.Decoder]] derivation
+/** Here we test busymachines.pureharm.json.Decoder derivation
   *
-  * See the [[Melon]] hierarchy
+  * See the Melon hierarchy
   *
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 11 Jun 2019

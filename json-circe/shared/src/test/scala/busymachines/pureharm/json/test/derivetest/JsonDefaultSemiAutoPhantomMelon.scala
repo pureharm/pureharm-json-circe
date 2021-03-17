@@ -32,7 +32,7 @@ import busymachines.pureharm.testkit.TestLogger
   */
 final class JsonDefaultSemiAutoPhantomMelon extends PureharmTest {
 
-  override implicit def testLogger: TestLogger = TestLogger(org.typelevel.log4cats.slf4j.Slf4jLogger.getLogger[IO])
+  implicit override def testLogger: TestLogger = TestLogger(org.typelevel.log4cats.slf4j.Slf4jLogger.getLogger[IO])
 
   import melonsDefaultSemiAutoCodecs._
 
@@ -57,7 +57,7 @@ final class JsonDefaultSemiAutoPhantomMelon extends PureharmTest {
   test("... encode + fail on decode of wrong safePhantomMelon") {
     val originalPhantomMelon: Melon = PhantomMelon(
       weight        = Weight(42),
-      refinedWeight = (-1 : Int).asInstanceOf[RefinedWeight],
+      refinedWeight = (-1: Int).asInstanceOf[RefinedWeight],
       weights       = Weights(List(1, 2)),
       weightsSet    = WeigthsSet(Set(3, 4)),
       duo           = MelonDuo((5, "duo")),

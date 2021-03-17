@@ -123,6 +123,8 @@ lazy val `json-circe` = crossProject(JVMPlatform)
       "com.busymachines" %%% "pureharm-effects-cats" % pureharmEffectsV withSources(),
 
       "com.busymachines" %% "pureharm-testkit" % pureharmTestkitV % Test withSources(),
+      "org.scalatest" %%% "scalatest-flatspec" % "3.2.6" % Test withSources(),
+      "org.scalatest" %%% "scalatest-shouldmatchers" % "3.2.6" % Test withSources(),
       "org.typelevel" %% "log4cats-slf4j" % log4catsV % Test withSources(),
     ),
   )

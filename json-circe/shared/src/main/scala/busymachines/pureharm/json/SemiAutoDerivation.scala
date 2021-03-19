@@ -40,9 +40,9 @@ trait SemiAutoDerivation {
 Decoder[${A}] failed to be derived.
 _
 Deriving decoders in pureharm style can run into one of the several problems:
-   1) if your case class has any PhantomType[T] for any T, then make sure you have an Decoder (xor Codec) for T, AND the PureharmJsonImplicits in scope, usually by mixing that trait into your myapp.json.implicits._ and importing it.
+   1) if your case class has any Sprout/Sub[T] for any T, then make sure you have an Decoder (xor Codec) for T, AND the PureharmJsonImplicits in scope, usually by mixing that trait into your myapp.json.implicits._ and importing it.
    _
-   2) if your case class has some field of type SafePhantomType[E, T], you need to have a Show[E] for its error, since circe uses Strings for errors. Usually, if your error is a Throwable, pureharm.effects.implicits._ contains Show[Throwable] otherwise roll your own.
+   2) if your case class has some field of type SproutRefined/Sub[E, T], you need to have a Show[E] for its error, since circe uses Strings for errors.
    _
    3) Make sure you have one, and only one io.circe.generic.extras.Configuration in scope. In pureharm, this is usually brought int in by mixing in PureharmJsonImplicits into your myapp.json.implicits package.
    _
@@ -73,7 +73,7 @@ Deriving decoders in pureharm style can run into one of the several problems:
 Encoder[${A}] failed to be derived.
 _
 Deriving encoders in pureharm style can run into one of the several problems:
-   1) if your case class has any PhantomType[T]/SafePhantomType[_, T] for any T, then make sure you have an Encoder (xor Codec) for T, AND the PureharmJsonImplicits in scope, usually by mixing that trait into your myapp.json.implicits._ and importing it.
+   1) if your case class has any Sprout/Sub[T]/SproutRefined/Sub[_, T] for any T, then make sure you have an Encoder (xor Codec) for T, AND the PureharmJsonImplicits in scope, usually by mixing that trait into your myapp.json.implicits._ and importing it.
    _
    2) Make sure you have one, and only one io.circe.generic.extras.Configuration in scope. In pureharm, this is usually brought int in by mixing in PureharmJsonImplicits into your myapp.json.implicits package.
    _
@@ -106,9 +106,9 @@ Deriving encoders in pureharm style can run into one of the several problems:
 Codec[${A}] failed to be derived.
 _
 Deriving codecs in pureharm style can run into one of the several problems:
-   1) if your case class has any PhantomType[T] for any T, then make sure you have an Encoder/Decoder (xor Codec) for T, AND the PureharmJsonImplicits in scope, usually by mixing that trait into your myapp.json.implicits._ and importing it.
+   1) if your case class has any Sprout/Sub[T] for any T, then make sure you have an Encoder/Decoder (xor Codec) for T, AND the PureharmJsonImplicits in scope, usually by mixing that trait into your myapp.json.implicits._ and importing it.
    _
-   2) if your case class has some field of type SafePhantomType[E, T], you need to have a Show[E] for its error, since circe uses Strings for errors. Usually, if your error is a Throwable, pureharm.effects.implicits._ contains Show[Throwable] otherwise roll your own.
+   2) if your case class has some field of type SproutRefined/Sub[E, T], you need to have a Show[E] for its error, since circe uses Strings for errors.
    _
    3) Make sure you have one, and only one io.circe.generic.extras.Configuration in scope. In pureharm, this is usually brought int in by mixing in PureharmJsonImplicits into your myapp.json.implicits package.
    _

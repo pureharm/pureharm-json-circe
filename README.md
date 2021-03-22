@@ -6,7 +6,7 @@ See [changelog](./CHANGELOG.md).
 
 The available modules are.
 
-- `"com.busymachines" %% s"json-circe" % "0.1.0"`. Which in turn depends on:
+- `"com.busymachines" %% s"json-circe" % "0.1.1"`. Which in turn depends on:
     - [circe](https://github.com/circe/circe) `0.13.0`
     - [pureharm-core-anomaly](https://github.com/pureharm-core/releases) `0.1.0`
     - [pureharm-core-sprout](https://github.com/busymachines/pureharm-core/releases) `0.1.0`

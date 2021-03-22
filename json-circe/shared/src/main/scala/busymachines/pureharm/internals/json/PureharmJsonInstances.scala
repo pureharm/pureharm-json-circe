@@ -18,8 +18,8 @@ package busymachines.pureharm.internals.json
 
 import scala.annotation.implicitNotFound
 
-import busymachines.pureharm.effects.Show
-import busymachines.pureharm.effects.implicits._
+import cats._
+import cats.implicits._
 import busymachines.pureharm.sprout._
 import io.circe.{Decoder, Encoder}
 

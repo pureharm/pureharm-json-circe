@@ -17,8 +17,7 @@
 package busymachines.pureharm.internals.json
 
 import busymachines.pureharm.anomaly._
-import busymachines.pureharm.effects._
-import busymachines.pureharm.effects.implicits._
+import cats.implicits._
 import io.circe._
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
@@ -26,21 +25,27 @@ import io.circe._
   */
 object JsonDecoding {
 
-  def decodeAs[A](json: Json)(implicit decoder: Decoder[A]): Attempt[A] = {
+  def decodeAs[A](json: Json)(implicit decoder: Decoder[A]): Either[Throwable, A] = {
     val r: io.circe.Decoder.Result[A] = decoder.decodeJson(json)
     r.leftMap(df => JsonDecodingAnomaly(df.getMessage))
   }
 
-  def decodeAs[A](json: String)(implicit decoder: Decoder[A]): Attempt[A] = {
+  def decodeAs[A](json: String)(implicit decoder: Decoder[A]): Either[Throwable, A] = {
     val je = JsonParsing.parseString(json)
     je.flatMap(json => this.decodeAs(json))
   }
 
   def unsafeDecodeAs[A](json: Json)(implicit decoder: Decoder[A]): A =
-    this.decodeAs[A](json)(decoder).unsafeGet()
+    this.decodeAs[A](json)(decoder) match {
+      case Left(e)  => throw e
+      case Right(v) => v
+    }
 
   def unsafeDecodeAs[A](json: String)(implicit decoder: Decoder[A]): A =
-    JsonDecoding.decodeAs(json).unsafeGet()
+    JsonDecoding.decodeAs(json) match {
+      case Left(e)  => throw e
+      case Right(v) => v
+    }
 }
 
 final case class JsonDecodingAnomaly(msg: String) extends InvalidInputAnomaly(msg) {
@@ -52,11 +57,14 @@ final case class JsonDecodingAnomaly(msg: String) extends InvalidInputAnomaly(ms
   */
 object JsonParsing {
 
-  def parseString(input: String): Attempt[Json] =
+  def parseString(input: String): Either[Throwable, Json] =
     io.circe.parser.parse(input).leftMap(pf => JsonParsingAnomaly(pf.message))
 
   def unsafeParseString(input: String): Json =
-    JsonParsing.parseString(input).unsafeGet()
+    JsonParsing.parseString(input) match {
+      case Left(e) => throw e
+      case Right(v) => v
+    }
 
 }
 

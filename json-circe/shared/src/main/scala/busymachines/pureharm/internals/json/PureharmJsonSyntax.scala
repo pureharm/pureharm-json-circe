@@ -16,7 +16,6 @@
 
 package busymachines.pureharm.internals.json
 
-import busymachines.pureharm.effects._
 import io.circe._
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
@@ -49,7 +48,7 @@ object PureharmJsonSyntax {
     def unsafeDecodeAs[A](implicit decoder: Decoder[A]): A =
       JsonDecoding.unsafeDecodeAs[A](rawJson)
 
-    def decodeAs[A](implicit decoder: Decoder[A]): Attempt[A] =
+    def decodeAs[A](implicit decoder: Decoder[A]): Either[Throwable, A] =
       JsonDecoding.decodeAs[A](rawJson)
   }
 
@@ -58,7 +57,7 @@ object PureharmJsonSyntax {
     def unsafeDecodeAs[A](implicit decoder: Decoder[A]): A =
       JsonDecoding.unsafeDecodeAs[A](js)
 
-    def decodeAs[A](implicit decoder: Decoder[A]): Attempt[A] =
+    def decodeAs[A](implicit decoder: Decoder[A]): Either[Throwable, A] =
       JsonDecoding.decodeAs[A](js)
 
     def noSpacesNoNulls: String = js.printWith(PrettyJson.noSpacesNoNulls)

@@ -85,7 +85,6 @@ ThisBuild / resolvers += Resolver.sonatypeRepo("releases")
 ThisBuild / resolvers += Resolver.sonatypeRepo("snapshots")
 
 val pureharmCoreV    = "0.1.0" //https://github.com/busymachines/pureharm-core/releases
-val pureharmEffectsV = "0.1.0" //https://github.com/busymachines/pureharm-effects-cats/releases
 
 val circeV = "0.13.0" //https://github.com/circe/circe/releases
 
@@ -120,7 +119,6 @@ lazy val `json-circe` = crossProject(JVMPlatform)
       "io.circe" %% "circe-parser"         % circeV withSources (),
       "com.busymachines" %%% "pureharm-core-anomaly" % pureharmCoreV withSources(),
       "com.busymachines" %%% "pureharm-core-sprout" % pureharmCoreV withSources(),
-      "com.busymachines" %%% "pureharm-effects-cats" % pureharmEffectsV withSources(),
 
       "com.busymachines" %% "pureharm-testkit" % pureharmTestkitV % Test withSources(),
       "org.scalatest" %%% "scalatest-flatspec" % "3.2.6" % Test withSources(),

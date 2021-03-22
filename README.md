@@ -10,7 +10,6 @@ The available modules are.
     - [circe](https://github.com/circe/circe) `0.13.0`
     - [pureharm-core-anomaly](https://github.com/pureharm-core/releases) `0.1.0`
     - [pureharm-core-sprout](https://github.com/busymachines/pureharm-core/releases) `0.1.0`
-    - [pureharm-effects-cats](https://github.com/busymachines/pureharm-effects-cats/releases) `0.1.0`
 
 ## usage
 

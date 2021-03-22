@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # unreleased
 
+# 0.1.1
+
+This is only a maintenance release.
+
+- drop compile dependency on [`pureharm-effects-cats`](https://github.com/busymachines/pureharm-effects-cats/releases).
+  If you pulled the dependency yourself via this module, then just add it manually
+
 # 0.1.0
 
 Split out from [pureharm](https://github.com/busymachines/pureharm) as of version `0.0.7`.

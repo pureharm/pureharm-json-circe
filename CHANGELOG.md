@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # unreleased
 
+# 0.2.0
+
 ### :warning: Breaking changes
 
 - offer implicit circe decoders only for `RefinedTypeThrow[O, N]` instead of `RefinedType[O, N, E]`. This is part of a larger decision that pureharm simply uses Throwable subtypes for errors. The support for the generic version also tripped up end users that didn't have a `Show[Throwable]` instance in scope.

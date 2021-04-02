@@ -35,12 +35,14 @@ object JsonDecoding {
     je.flatMap(json => this.decodeAs(json))
   }
 
+  @scala.deprecated("Just use the safe version, and throw errors in user code. Will be removed in 0.3.0", "0.2.0")
   def unsafeDecodeAs[A](json: Json)(implicit decoder: Decoder[A]): A =
     this.decodeAs[A](json)(decoder) match {
       case Left(e)  => throw e
       case Right(v) => v
     }
 
+  @scala.deprecated("Just use the safe version, and throw errors in user code. Will be removed in 0.3.0", "0.2.0")
   def unsafeDecodeAs[A](json: String)(implicit decoder: Decoder[A]): A =
     JsonDecoding.decodeAs(json) match {
       case Left(e)  => throw e
@@ -60,6 +62,7 @@ object JsonParsing {
   def parseString(input: String): Either[Throwable, Json] =
     io.circe.parser.parse(input).leftMap(pf => JsonParsingAnomaly(pf.message))
 
+  @scala.deprecated("Just use the safe version, and throw errors in user code. Will be removed in 0.3.0", "0.2.0")
   def unsafeParseString(input: String): Json =
     JsonParsing.parseString(input) match {
       case Left(e)  => throw e

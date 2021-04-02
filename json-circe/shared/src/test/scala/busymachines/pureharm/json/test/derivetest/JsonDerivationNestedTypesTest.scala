@@ -51,9 +51,10 @@ final class JsonDerivationNestedTypesTest1 extends JsonTest {
       """.stripMargin.trim.pure[IO]
 
       json = outdoorMelon.asJson
+      read <- stringyJson.decodeAs[OutdoorMelon].liftTo[IO]
 
       _ = assertEquals(obtained = json.spaces2NoNulls, expected = stringyJson, "encoder")
-      _ = assertEquals(obtained = stringyJson.unsafeDecodeAs[OutdoorMelon], expected = outdoorMelon, "decoder")
+      _ = assertEquals(obtained = read, expected = outdoorMelon, "decoder")
     } yield ()
 
   }
@@ -86,9 +87,10 @@ final class JsonDerivationNestedTypesTest2 extends JsonTest {
       """.stripMargin.trim.pure[IO]
 
       json = outdoorMelon.asJson
+      read <- stringyJson.decodeAs[OutdoorMelon].liftTo[IO]
 
       _ = assertEquals(obtained = json.spaces2NoNulls, expected = stringyJson, "encoder")
-      _ = assertEquals(obtained = stringyJson.unsafeDecodeAs[OutdoorMelon], expected = outdoorMelon, "decoder")
+      _ = assertEquals(obtained = read, expected = outdoorMelon, "decoder")
     } yield ()
 
   }

@@ -49,7 +49,7 @@ final class JsonDefaultSemiAutoCodecDerivationTest extends JsonTest {
       val errors = compileErrors(
         """
           val rawJson = "{}"
-          rawJson.unsafeDecodeAs[WinterMelon]
+          rawJson.decodeAs[WinterMelon]
          """
       )
       assert(

@@ -66,38 +66,6 @@ final class JsonUtilsTest extends JsonTest {
 
   //-----------------------------------------------------------------------------------------------
 
-  test("JsonParsing.unsafe - parse correct json") {
-    for {
-      rawJson <-
-        """
-          |{
-          |  "noGods" : true,
-          |  "noMasters" : true,
-          |  "noSuperTypes" : true
-          |}
-      """.stripMargin.pure[IO]
-      _       <- IO(JsonParsing.unsafeParseString(rawJson))
-    } yield ()
-  }
-
-  //-----------------------------------------------------------------------------------------------
-
-  test("JsonParsing.unsafe - throw exception on incorrect json") {
-    for {
-      rawJson <-
-        """
-          |{
-          |  "noGods" : true
-          |  "noMasters" : true,
-          |  "noSuperTypes" : true
-          |}
-      """.stripMargin.pure[IO]
-      _ = intercept[JsonParsingAnomaly](JsonParsing.unsafeParseString(rawJson))
-    } yield ()
-  }
-
-  //-----------------------------------------------------------------------------------------------
-
   test("JsonDecoding.safe - correctly decode when JSON, and representation are correct") {
     for {
       rawJson <-

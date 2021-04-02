@@ -16,7 +16,9 @@
 
 package busymachines.pureharm.json.test.derivetest
 
-import org.scalatest.flatspec.AnyFlatSpec
+import busymachines.pureharm.effects._
+import busymachines.pureharm.effects.implicits._
+
 import busymachines.pureharm.json.implicits._
 import busymachines.pureharm.json.test._
 
@@ -27,79 +29,84 @@ import busymachines.pureharm.json.test._
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 11 Jun 2019
   */
-final class JsonDefaultSemiAutoCodecDerivationTest extends AnyFlatSpec {
+final class JsonDefaultSemiAutoCodecDerivationTest extends JsonTest {
   import melonsDefaultSemiAutoCodecs._
   //-----------------------------------------------------------------------------------------------
 
-  it should "... be able to serialize/deserialize anarchist melon (i.e. not part of any hierarchy)" in {
-    val anarchistMelon = AnarchistMelon(noGods = true, noMasters = true, noSuperTypes = true)
-    val asJson         = anarchistMelon.asJson.spaces2
-    val read           = asJson.unsafeDecodeAs[AnarchistMelon]
-    assertResult(anarchistMelon)(read)
+  test("... be able to serialize/deserialize anarchist melon (i.e. not part of any hierarchy)") {
+    for {
+      anarchistMelon <- AnarchistMelon(noGods = true, noMasters = true, noSuperTypes = true).pure[IO]
+      asJson = anarchistMelon.asJson.spaces2
+      read <- asJson.decodeAs[AnarchistMelon].liftTo[IO]
+    } yield assertEquals(obtained = read, expected = anarchistMelon)
+
   }
 
   //-----------------------------------------------------------------------------------------------
 
-  it should "... fail to compile when there is no explicitly defined codec for a type down in the hierarchy" in {
-    withClue("... decoding part") {
-      assertDoesNotCompile(
+  test("... fail to compile when there is no explicitly defined codec for a type down)the hierarchy") {
+    IO {
+      val errors = compileErrors(
         """
-          |val rawJson = "{}"
-          |rawJson.unsafeDecodeAs[WinterMelon]
-        """.stripMargin
+          val rawJson = "{}"
+          rawJson.unsafeDecodeAs[WinterMelon]
+         """
+      )
+      assert(
+        cond = errors.contains(
+          """could not find implicit value for parameter decoder: io.circe.Decoder[busymachines.pureharm.json.test.WinterMelon]"""
+        ),
+        clue = s"""|Expected a specific compiler error. But it was:
+                   |
+                   |$errors
+                   |
+                   |""".stripMargin,
       )
     }
-
-    withClue("... encoding part") {
-      assertDoesNotCompile(
-        """
-          |val winterMelon: WinterMelon = WinterMelon(fuzzy = true, weight = 45)
-          |winterMelon.asJson
-        """.stripMargin
-      )
-    }
-
   }
 
   //-----------------------------------------------------------------------------------------------
 
-  it should "... be able to serialize/deserialize a case class from hierarchy when it is referred to as its super-type" in {
-    val winterMelon: Melon = WinterMelon(fuzzy = true, weight = 45)
-    val rawJson = winterMelon.asJson.spaces2
-    val read    = rawJson.unsafeDecodeAs[Melon]
-    assertResult(winterMelon)(read)
+  test("... be able to serialize/deserialize a case class from hierarchy when it is referred to as its super-type") {
+    for {
+      winterMelon <- WinterMelon(fuzzy = true, weight = 45).pure[IO].widen[Melon]
+      asJson = winterMelon.asJson.spaces2
+      read <- asJson.decodeAs[Melon].liftTo[IO]
+    } yield assertEquals(obtained = read, expected = winterMelon)
   }
 
   //-----------------------------------------------------------------------------------------------
 
-  it should "... be able to deserialize case objects of the hierarchy" in {
-    val smallMelon: Melon = SmallMelon
-    val rawJson = smallMelon.asJson.spaces2
-    val read    = rawJson.unsafeDecodeAs[Melon]
-    assertResult(smallMelon)(read)
+  test("... be able to deserialize case objects of the hierarchy") {
+    for {
+      smallMelon <- SmallMelon.pure[IO].widen[Melon]
+      asJson = smallMelon.asJson.spaces2
+      read <- asJson.decodeAs[Melon].liftTo[IO]
+    } yield assertEquals(obtained = read, expected = smallMelon)
   }
 
   //-----------------------------------------------------------------------------------------------
 
-  it should "... deserialize hierarchies of case objects as enums (i.e. plain strings)" in {
-    val taste: List[Taste] = List(SweetTaste, SourTaste)
-    val rawJson = taste.asJson.spaces2
-    val read    = rawJson.unsafeDecodeAs[List[Taste]]
-    assertResult(read)(taste)
+  test("... deserialize hierarchies of case objects as enums (i.e. plain strings)") {
+    for {
+      taste <- List(SweetTaste, SourTaste).pure[IO].widen[List[Taste]]
+      asJson = taste.asJson.spaces2
+      read <- asJson.decodeAs[List[Taste]].liftTo[IO]
+    } yield assertEquals(obtained = read, expected = taste)
   }
 
   //-----------------------------------------------------------------------------------------------
 
-  it should "... deserialize list of all case classes from the hierarchy" in {
-    val winterMelon: Melon = WinterMelon(fuzzy = true, weight = 45)
-    val waterMelon:  Melon = WaterMelon(seeds = true, weight = 90)
-    val smallMelon:  Melon = SmallMelon
-    val squareMelon: Melon = SquareMelon(weight = 10, tastes = Seq(SourTaste, SweetTaste))
-    val melons = List[Melon](winterMelon, waterMelon, smallMelon, squareMelon)
-
-    val rawJson = melons.asJson.spaces2
-    val read: List[Melon] = rawJson.unsafeDecodeAs[List[Melon]]
-    assertResult(melons)(read)
+  test("... deserialize list of all case classes from the hierarchy") {
+    for {
+      winterMelon <- WinterMelon(fuzzy = true, weight = 45).pure[IO].widen[Melon]
+      waterMelon  <- WaterMelon(seeds = true, weight = 90).pure[IO].widen[Melon]
+      smallMelon  <- SmallMelon.pure[IO].widen[Melon]
+      squareMelon <- SquareMelon(weight = 10, tastes = Seq(SourTaste, SweetTaste)).pure[IO].widen[Melon]
+      melons = List[Melon](winterMelon, waterMelon, smallMelon, squareMelon)
+      asJson = melons.asJson.spaces2
+      read <- asJson.decodeAs[List[Melon]].liftTo[IO]
+    } yield assertEquals(obtained = read, expected = melons)
   }
 
   //-----------------------------------------------------------------------------------------------

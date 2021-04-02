@@ -19,7 +19,7 @@ package busymachines.pureharm.json.test.derivetest
 import busymachines.pureharm.json._
 import busymachines.pureharm.json.implicits._
 import busymachines.pureharm.json.test._
-import ThrowableShow._
+import busymachines.pureharm.anomaly._
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 11 Jun 2019

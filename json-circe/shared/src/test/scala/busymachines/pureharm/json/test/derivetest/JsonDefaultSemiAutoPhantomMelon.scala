@@ -16,12 +16,11 @@
 
 package busymachines.pureharm.json.test.derivetest
 
-import busymachines.pureharm.anomaly.InvalidInputAnomaly
+import busymachines.pureharm.anomaly._
 import busymachines.pureharm.effects._
+import busymachines.pureharm.effects.implicits._
 import busymachines.pureharm.json.implicits._
 import busymachines.pureharm.json.test._
-import busymachines.pureharm.testkit.PureharmTest
-import busymachines.pureharm.testkit.TestLogger
 
 /** Here we test busymachines.pureharm.json.Decoder derivation
   *
@@ -30,43 +29,43 @@ import busymachines.pureharm.testkit.TestLogger
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 11 Jun 2019
   */
-final class JsonDefaultSemiAutoPhantomMelon extends PureharmTest {
-
-  implicit override def testLogger: TestLogger = TestLogger(org.typelevel.log4cats.slf4j.Slf4jLogger.getLogger[IO])
+final class JsonDefaultSemiAutoPhantomMelon extends JsonTest {
 
   import melonsDefaultSemiAutoCodecs._
 
   //-----------------------------------------------------------------------------------------------
 
-  test("... encode + decode phantomMelon") {
-    val originalPhantomMelon: Melon = PhantomMelon(
-      weight        = Weight(42),
-      refinedWeight = RefinedWeight[Try](42).get,
-      weights       = Weights(List(1, 2)),
-      weightsSet    = WeigthsSet(Set(3, 4)),
-      duo           = MelonDuo((5, "duo")),
-      trio          = MelonTrio((6, "trio", List(1, 2, 3))),
-    )
+  test("... encode + decode sproutMelon") {
+    for {
+      originalPhantomMelon <- PhantomMelon(
+        weight        = Weight(42),
+        refinedWeight = RefinedWeight[Try](42).get,
+        weights       = Weights(List(1, 2)),
+        weightsSet    = WeigthsSet(Set(3, 4)),
+        duo           = MelonDuo((5, "duo")),
+        trio          = MelonTrio((6, "trio", List(1, 2, 3))),
+      ).pure[IO].widen[Melon]
 
-    val encoded = originalPhantomMelon.asJson
-    val decoded = encoded.unsafeDecodeAs[Melon]
-
-    IO(assertResult(originalPhantomMelon)(decoded))
+      encoded = originalPhantomMelon.asJson
+      decoded <- encoded.decodeAs[Melon].liftTo[IO]
+    } yield assertEquals(obtained = decoded, expected = originalPhantomMelon)
   }
 
   test("... encode + fail on decode of wrong safePhantomMelon") {
-    val originalPhantomMelon: Melon = PhantomMelon(
-      weight        = Weight(42),
-      refinedWeight = (-1: Int).asInstanceOf[RefinedWeight],
-      weights       = Weights(List(1, 2)),
-      weightsSet    = WeigthsSet(Set(3, 4)),
-      duo           = MelonDuo((5, "duo")),
-      trio          = MelonTrio((6, "trio", List(1, 2, 3))),
-    )
+    for {
+      originalPhantomMelon: Melon <- PhantomMelon(
+        weight        = Weight(42),
+        // this works because sprouts have the same runtime representation as the base type
+        refinedWeight = (-1: Int).asInstanceOf[RefinedWeight],
+        weights       = Weights(List(1, 2)),
+        weightsSet    = WeigthsSet(Set(3, 4)),
+        duo           = MelonDuo((5, "duo")),
+        trio          = MelonTrio((6, "trio", List(1, 2, 3))),
+      ).pure[IO].widen[Melon]
 
-    val encoded = originalPhantomMelon.asJson
-    val attempt = encoded.decodeAs[Melon]
-
-    IO(assertFailure[InvalidInputAnomaly](attempt))
+      encoded = originalPhantomMelon.asJson
+      attempt = encoded.decodeAs[Melon]
+      _       = interceptFailure[InvalidInputAnomaly](attempt)
+    } yield ()
   }
 }

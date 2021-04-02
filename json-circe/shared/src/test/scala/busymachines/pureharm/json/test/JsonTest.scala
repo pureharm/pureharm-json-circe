@@ -14,8 +14,13 @@
  * limitations under the License.
  */
 
-package busymachines.pureharm.json.test.derivetest
+package busymachines.pureharm.json.test
 
-object ThrowableShow {
-  implicit val showThrowable: cats.Show[Throwable] = cats.Show.fromToString[Throwable]
+import busymachines.pureharm.testkit._
+import busymachines.pureharm.effects.IO
+
+abstract class JsonTest extends PureharmTest {
+
+  implicit override val testLogger: TestLogger = TestLogger(org.typelevel.log4cats.noop.NoOpLogger.impl[IO])
+
 }

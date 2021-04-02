@@ -16,10 +16,7 @@
 
 package busymachines.pureharm.json.test.derivetest
 
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.EitherValues
-
+import busymachines.pureharm.effects._
 import busymachines.pureharm.effects.implicits._
 import busymachines.pureharm.json._
 import busymachines.pureharm.internals.json.{JsonDecoding, JsonParsing}
@@ -28,131 +25,130 @@ import busymachines.pureharm.json.test._
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 11 Jun 2019
   */
-final class JsonUtilsTest extends AnyFlatSpec with EitherValues with Matchers {
+final class JsonUtilsTest extends JsonTest {
 
   import melonsDefaultSemiAutoCodecs._
 
-  behavior of "JsonParsing.safe"
-
   //-----------------------------------------------------------------------------------------------
 
-  it should ".... parse correct json" in {
-    val rawJson =
-      """
-        |{
-        |  "noGods" : true,
-        |  "noMasters" : true,
-        |  "noSuperTypes" : true
-        |}
-      """.stripMargin
+  test("JsonParsing.safe - parse correct json") {
+    for {
+      rawJson <-
+        """
+          |{
+          |  "noGods" : true,
+          |  "noMasters" : true,
+          |  "noSuperTypes" : true
+          |}
+      """.stripMargin.pure[IO]
+      _       <- JsonParsing.parseString(rawJson).liftTo[IO]
+    } yield ()
 
-    JsonParsing.parseString(rawJson).unsafeGet()
   }
 
   //-----------------------------------------------------------------------------------------------
 
-  it should ".... fail on incorrect json" in {
-    val rawJson =
-      """
-        |{
-        |  "noGods" : true
-        |  "noMasters" : true,
-        |  "noSuperTypes" : true
-        |}
-      """.stripMargin
-
-    an[JsonParsingAnomaly] shouldBe thrownBy {
-      JsonParsing.parseString(rawJson).unsafeGet()
-    }
+  test("JsonParsing.safe - fail on incorrect json") {
+    for {
+      rawJson <-
+        """
+          |{
+          |  "noGods" : true
+          |  "noMasters" : true,
+          |  "noSuperTypes" : true
+          |}
+      """.stripMargin.pure[IO]
+      _ = interceptFailure[JsonParsingAnomaly] {
+        JsonParsing.parseString(rawJson)
+      }
+    } yield ()
   }
 
   //-----------------------------------------------------------------------------------------------
 
-  behavior of "JsonParsing.unsafe"
-
-  //-----------------------------------------------------------------------------------------------
-
-  it should ".... parse correct json" in {
-    val rawJson =
-      """
-        |{
-        |  "noGods" : true,
-        |  "noMasters" : true,
-        |  "noSuperTypes" : true
-        |}
-      """.stripMargin
-
-    JsonParsing.unsafeParseString(rawJson)
+  test("JsonParsing.unsafe - parse correct json") {
+    for {
+      rawJson <-
+        """
+          |{
+          |  "noGods" : true,
+          |  "noMasters" : true,
+          |  "noSuperTypes" : true
+          |}
+      """.stripMargin.pure[IO]
+      _       <- IO(JsonParsing.unsafeParseString(rawJson))
+    } yield ()
   }
 
   //-----------------------------------------------------------------------------------------------
 
-  it should ".... throw exception on incorrect json" in {
-    val rawJson =
-      """
-        |{
-        |  "noGods" : true
-        |  "noMasters" : true,
-        |  "noSuperTypes" : true
-        |}
-      """.stripMargin
-
-    an[JsonParsingAnomaly] shouldBe thrownBy {
-      JsonParsing.unsafeParseString(rawJson)
-    }
+  test("JsonParsing.unsafe - throw exception on incorrect json") {
+    for {
+      rawJson <-
+        """
+          |{
+          |  "noGods" : true
+          |  "noMasters" : true,
+          |  "noSuperTypes" : true
+          |}
+      """.stripMargin.pure[IO]
+      _ = intercept[JsonParsingAnomaly](JsonParsing.unsafeParseString(rawJson))
+    } yield ()
   }
 
   //-----------------------------------------------------------------------------------------------
 
-  behavior of "JsonDecoding.safe"
+  test("JsonDecoding.safe - correctly decode when JSON, and representation are correct") {
+    for {
+      rawJson <-
+        """
+          |{
+          |  "noGods" : true,
+          |  "noMasters" : true,
+          |  "noSuperTypes" : true
+          |}
+      """.stripMargin.pure[IO]
 
-  //-----------------------------------------------------------------------------------------------
-
-  it should "... correctly decode when JSON, and representation are correct" in {
-    val rawJson =
-      """
-        |{
-        |  "noGods" : true,
-        |  "noMasters" : true,
-        |  "noSuperTypes" : true
-        |}
-      """.stripMargin
-
-    val am = JsonDecoding.decodeAs[AnarchistMelon](rawJson).unsafeGet()
-    assertResult(AnarchistMelon(noGods = true, noMasters = true, noSuperTypes = true))(am)
+      am <- JsonDecoding.decodeAs[AnarchistMelon](rawJson).liftTo[IO]
+      _ = assertEquals(
+        obtained = am,
+        expected = AnarchistMelon(noGods = true, noMasters = true, noSuperTypes = true),
+      )
+    } yield ()
   }
 
   //-----------------------------------------------------------------------------------------------
 
-  it should "... fail with parsing error when JSON has syntax errors" in {
-    val rawJson =
-      """
-        |{
-        |  "noGods" : true
-        |  "noMasters" : true,
-        |  "noSuperTypes" : true
-        |}
-      """.stripMargin
+  test("JsonDecoding.safe - fail with parsing error when JSON has syntax errors") {
+    for {
+      rawJson <-
+        """
+          |{
+          |  "noGods" : true
+          |  "noMasters" : true,
+          |  "noSuperTypes" : true
+          |}
+      """.stripMargin.pure[IO]
 
-    an[JsonParsingAnomaly] shouldBe thrownBy {
-      JsonDecoding.decodeAs[AnarchistMelon](rawJson).unsafeGet()
-    }
+      _ = interceptFailure[JsonParsingAnomaly](JsonDecoding.decodeAs[AnarchistMelon](rawJson))
+    } yield ()
   }
 
   //-----------------------------------------------------------------------------------------------
 
-  it should "... fail with decoding error when JSON is syntactically correct, but encoding is wrong" in {
-    val rawJson =
-      """
-        |{
-        |  "noMasters" : true,
-        |  "noSuperTypes" : true
-        |}
-      """.stripMargin
+  test("JsonDecoding.safe - fail with decoding error when JSON is syntactically correct, but encoding is wrong") {
+    for {
+      rawJson <-
+        """
+          |{
+          |  "noMasters" : true,
+          |  "noSuperTypes" : true
+          |}
+      """.stripMargin.pure[IO]
 
-    the[JsonDecodingAnomaly] thrownBy {
-      JsonDecoding.decodeAs[AnarchistMelon](rawJson).unsafeGet()
-    }
+      _ = interceptFailure[JsonDecodingAnomaly](JsonDecoding.decodeAs[AnarchistMelon](rawJson))
+    } yield ()
+
   }
 
   //-----------------------------------------------------------------------------------------------

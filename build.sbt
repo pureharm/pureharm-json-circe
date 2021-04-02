@@ -83,14 +83,12 @@ ThisBuild / versionIntroduced := Map(
 //=============================================================================
 ThisBuild / resolvers += Resolver.sonatypeRepo("releases")
 ThisBuild / resolvers += Resolver.sonatypeRepo("snapshots")
-
-val pureharmCoreV    = "0.1.0" //https://github.com/busymachines/pureharm-core/releases
-
-val circeV = "0.13.0" //https://github.com/circe/circe/releases
-
-//for testing
-val pureharmTestkitV = "0.1.0" //https://github.com/busymachines/pureharm-testkit/releases
-val log4catsV = "1.2.0" //https://github.com/typelevel/log4cats/releases
+// format: off
+val pureharmCoreV       = "0.2.0"       //https://github.com/busymachines/pureharm-core/releases
+val circeV              = "0.13.0"      //https://github.com/circe/circe/releases
+val pureharmTestkitV    = "0.2.0"       //https://github.com/busymachines/pureharm-testkit/releases
+val log4catsV           = "1.2.2"       //https://github.com/typelevel/log4cats/releases
+// format: on
 //=============================================================================
 //============================== Project details ==============================
 //=============================================================================
@@ -99,31 +97,26 @@ lazy val root = project
   .in(file("."))
   .aggregate(
     `json-circeJVM`,
-    //`json-circeJS`,
+    `json-circeJS`,
   )
   .enablePlugins(NoPublishPlugin)
   .enablePlugins(SonatypeCiReleasePlugin)
   .settings(commonSettings)
 
-lazy val `json-circe` = crossProject(JVMPlatform)
+lazy val `json-circe` = crossProject(JVMPlatform, JSPlatform)
   .settings(commonSettings)
-  // .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
-  // .jsSettings(
-  //   scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule))
-  // )
+
   .settings(
     name := "pureharm-json-circe",
     libraryDependencies ++= Seq(
-      "io.circe" %% "circe-core"           % circeV withSources (),
-      "io.circe" %% "circe-generic-extras" % circeV withSources (),
-      "io.circe" %% "circe-parser"         % circeV withSources (),
+      "io.circe" %%% "circe-core"           % circeV withSources (),
+      "io.circe" %%% "circe-generic-extras" % circeV withSources (),
+      "io.circe" %%% "circe-parser"         % circeV withSources (),
       "com.busymachines" %%% "pureharm-core-anomaly" % pureharmCoreV withSources(),
       "com.busymachines" %%% "pureharm-core-sprout" % pureharmCoreV withSources(),
 
-      "com.busymachines" %% "pureharm-testkit" % pureharmTestkitV % Test withSources(),
-      "org.scalatest" %%% "scalatest-flatspec" % "3.2.6" % Test withSources(),
-      "org.scalatest" %%% "scalatest-shouldmatchers" % "3.2.6" % Test withSources(),
-      "org.typelevel" %% "log4cats-slf4j" % log4catsV % Test withSources(),
+      "com.busymachines" %%% "pureharm-testkit" % pureharmTestkitV % Test withSources(),
+      "org.typelevel" %%% "log4cats-noop" % log4catsV % Test withSources(),
     ),
   )
 
@@ -131,7 +124,12 @@ lazy val `json-circeJVM` = `json-circe`.jvm.settings(
   javaOptions ++= Seq("-source", "1.8", "-target", "1.8")
 )
 
-//lazy val `json-circeJS` = `json-circe`.js
+lazy val `json-circeJS` = `json-circe`
+   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
+   .jsSettings(
+      scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule))
+    )
+    .js
 
 //=============================================================================
 //================================= Settings ==================================

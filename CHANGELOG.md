@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # unreleased
 
+### Deprecations
+
+- all `unsafe` syntax extensions are now deprecated. Will be removed in `0.3.0`. Just throw exceptions in the few places in client code where necessary.
+
 ### New Scala versions:
 
 - 2.13 for JS platform

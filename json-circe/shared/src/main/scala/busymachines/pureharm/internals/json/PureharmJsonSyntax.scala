@@ -43,8 +43,10 @@ object PureharmJsonSyntax {
   }
 
   final class DecoderOpsString(val rawJson: String) extends AnyVal {
+    @scala.deprecated("Just use the safe version, and throw errors in user code. Will be removed in 0.3.0", "0.2.0")
     def unsafeAsJson: Json = JsonParsing.unsafeParseString(rawJson)
 
+    @scala.deprecated("Just use the safe version, and throw errors in user code. Will be removed in 0.3.0", "0.2.0")
     def unsafeDecodeAs[A](implicit decoder: Decoder[A]): A =
       JsonDecoding.unsafeDecodeAs[A](rawJson)
 
@@ -54,6 +56,7 @@ object PureharmJsonSyntax {
 
   final class DecoderOpsJson(val js: Json) extends AnyVal {
 
+    @scala.deprecated("Just use the safe version, and throw errors in user code. Will be removed in 0.3.0", "0.2.0")
     def unsafeDecodeAs[A](implicit decoder: Decoder[A]): A =
       JsonDecoding.unsafeDecodeAs[A](js)
 

@@ -97,18 +97,15 @@ lazy val root = project
   .in(file("."))
   .aggregate(
     `json-circeJVM`,
-    //`json-circeJS`,
+    `json-circeJS`,
   )
   .enablePlugins(NoPublishPlugin)
   .enablePlugins(SonatypeCiReleasePlugin)
   .settings(commonSettings)
 
-lazy val `json-circe` = crossProject(JVMPlatform)
+lazy val `json-circe` = crossProject(JVMPlatform, JSPlatform)
   .settings(commonSettings)
-  // .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
-  // .jsSettings(
-  //   scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule))
-  // )
+
   .settings(
     name := "pureharm-json-circe",
     libraryDependencies ++= Seq(
@@ -127,7 +124,12 @@ lazy val `json-circeJVM` = `json-circe`.jvm.settings(
   javaOptions ++= Seq("-source", "1.8", "-target", "1.8")
 )
 
-//lazy val `json-circeJS` = `json-circe`.js
+lazy val `json-circeJS` = `json-circe`
+   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
+   .jsSettings(
+      scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule))
+    )
+    .js
 
 //=============================================================================
 //================================= Settings ==================================

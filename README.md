@@ -4,12 +4,14 @@ See [changelog](./CHANGELOG.md).
 
 ## modules
 
-The available modules are.
+- `"com.busymachines" %% s"json-circe" % "0.2.0"`. Which in turn depends on:
+  - [circe](https://github.com/circe/circe) `0.13.0`
+  - [pureharm-core-anomaly](https://github.com/pureharm-core/releases) `0.2.0`
+  - [pureharm-core-sprout](https://github.com/busymachines/pureharm-core/releases) `0.2.0`
 
-- `"com.busymachines" %% s"json-circe" % "0.1.1"`. Which in turn depends on:
-    - [circe](https://github.com/circe/circe) `0.13.0`
-    - [pureharm-core-anomaly](https://github.com/pureharm-core/releases) `0.1.0`
-    - [pureharm-core-sprout](https://github.com/busymachines/pureharm-core/releases) `0.1.0`
+### Scala versions
+
+- Scala 2.13: for JVM and JS
 
 ## usage
 

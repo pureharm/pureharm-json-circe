@@ -16,76 +16,79 @@
 
 package busymachines.pureharm.json.test.derivetest
 
+import busymachines.pureharm.effects._
 import busymachines.pureharm.json._
 import busymachines.pureharm.json.implicits._
 import busymachines.pureharm.json.test._
-import org.scalatest.flatspec.AnyFlatSpec
 
 /** @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 11 Jun 2019
   */
-final class JsonDerivationNestedTypesTest1 extends AnyFlatSpec {
+final class JsonDerivationNestedTypesTest1 extends JsonTest {
 
-  val outdoorMelon: OutdoorMelon = OutdoorMelons.WildMelon(
+  private val outdoorMelon: OutdoorMelon = OutdoorMelons.WildMelon(
     weight = 42,
     color  = OutdoorMelons.Colors.Green,
   )
 
   //-----------------------------------------------------------------------------------------------
   //moved outside of the test to avoid false positive of "implicit not used" warning
-  implicit val color:             Codec[OutdoorMelons.Color] = jsonTestCodecs.`OutdoorMelons.Color.codec`
-  implicit val outdoorMelonCodec: Codec[OutdoorMelon]        = derive.codec[OutdoorMelon]
+  implicit protected val color:             Codec[OutdoorMelons.Color] = jsonTestCodecs.`OutdoorMelons.Color.codec`
+  implicit protected val outdoorMelonCodec: Codec[OutdoorMelon]        = derive.codec[OutdoorMelon]
 
-  it should "... derive for case classes defined within objects — normal codecs" in {
-
-    val stringyJson =
-      """
-        |{
-        |  "weight" : 42,
-        |  "color" : {
-        |    "_type" : "Green"
-        |  },
-        |  "_type" : "WildMelon"
-        |}
+  test("... derive for case classes defined within objects — normal codecs") {
+    IO {
+      val stringyJson =
+        """
+          |{
+          |  "weight" : 42,
+          |  "color" : {
+          |    "_type" : "Green"
+          |  },
+          |  "_type" : "WildMelon"
+          |}
       """.stripMargin.trim
 
-    val json = outdoorMelon.asJson
+      val json = outdoorMelon.asJson
 
-    assert(stringyJson == json.spaces2NoNulls, "encoder")
-    assert(outdoorMelon == stringyJson.unsafeDecodeAs[OutdoorMelon], "decoder")
+      assertEquals(obtained = json.spaces2NoNulls, expected                      = stringyJson, "encoder")
+      assertEquals(obtained = stringyJson.unsafeDecodeAs[OutdoorMelon], expected = outdoorMelon, "decoder")
+    }
   }
 
   //-----------------------------------------------------------------------------------------------
 
 }
 
-final class JsonDerivationNestedTypesTest2 extends AnyFlatSpec {
+final class JsonDerivationNestedTypesTest2 extends JsonTest {
 
-  val outdoorMelon: OutdoorMelon = OutdoorMelons.WildMelon(
+  private val outdoorMelon: OutdoorMelon = OutdoorMelons.WildMelon(
     weight = 42,
     color  = OutdoorMelons.Colors.Green,
   )
 
   //-----------------------------------------------------------------------------------------------
   //moved outside of the test to avoid false positive of "implicit not used" warning
-  implicit val color:             Codec[OutdoorMelons.Color] = jsonTestCodecs.`OutdoorMelons.Color.enumerationCodec`
-  implicit val outdoorMelonCodec: Codec[OutdoorMelon]        = derive.codec[OutdoorMelon]
+  implicit protected val color:             Codec[OutdoorMelons.Color] = jsonTestCodecs.`OutdoorMelons.Color.enumerationCodec`
+  implicit protected val outdoorMelonCodec: Codec[OutdoorMelon]        = derive.codec[OutdoorMelon]
 
-  it should "... derive for case classes defined within objects — enumerationCodec" in {
-
-    val stringyJson =
-      """
-        |{
-        |  "weight" : 42,
-        |  "color" : "Green",
-        |  "_type" : "WildMelon"
-        |}
+  test("... derive for case classes defined within objects — enumerationCodec") {
+    IO {
+      val stringyJson =
+        """
+          |{
+          |  "weight" : 42,
+          |  "color" : "Green",
+          |  "_type" : "WildMelon"
+          |}
       """.stripMargin.trim
 
-    val json = outdoorMelon.asJson
+      val json = outdoorMelon.asJson
 
-    assert(stringyJson == json.spaces2NoNulls, "encoder")
-    assert(outdoorMelon == stringyJson.unsafeDecodeAs[OutdoorMelon], "decoder")
+      assertEquals(obtained = json.spaces2NoNulls, expected                      = stringyJson, "encoder")
+      assertEquals(obtained = stringyJson.unsafeDecodeAs[OutdoorMelon], expected = outdoorMelon, "decoder")
+    }
+
   }
 
   //-----------------------------------------------------------------------------------------------

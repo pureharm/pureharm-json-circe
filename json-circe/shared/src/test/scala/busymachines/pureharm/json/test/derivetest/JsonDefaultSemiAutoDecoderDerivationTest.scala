@@ -16,7 +16,8 @@
 
 package busymachines.pureharm.json.test.derivetest
 
-import org.scalatest.flatspec.AnyFlatSpec
+import busymachines.pureharm.effects._
+import busymachines.pureharm.effects.implicits._
 import busymachines.pureharm.json.implicits._
 import busymachines.pureharm.json.test._
 
@@ -27,133 +28,144 @@ import busymachines.pureharm.json.test._
   * @author Lorand Szakacs, https://github.com/lorandszakacs
   * @since 11 Jun 2019
   */
-final class JsonDefaultSemiAutoDecoderDerivationTest extends AnyFlatSpec {
+final class JsonDefaultSemiAutoDecoderDerivationTest extends JsonTest {
   import melonsDefaultSemiAutoDecoders._
 
   //-----------------------------------------------------------------------------------------------
 
-  it should "... be able to deserialize anarchist melon (i.e. not part of any hierarchy)" in {
-    val anarchistMelon = AnarchistMelon(noGods = true, noMasters = true, noSuperTypes = true)
-    val rawJson        =
-      """
-        |{
-        |  "noGods" : true,
-        |  "noMasters" : true,
-        |  "noSuperTypes" : true
-        |}
+  test("... be able to deserialize anarchist melon (i.e. not part of any hierarchy)") {
+    for {
+      anarchistMelon <- AnarchistMelon(noGods = true, noMasters = true, noSuperTypes = true).pure[IO]
+      rawJson =
+        """
+          |{
+          |  "noGods" : true,
+          |  "noMasters" : true,
+          |  "noSuperTypes" : true
+          |}
       """.stripMargin.trim
 
-    val read = rawJson.unsafeDecodeAs[AnarchistMelon]
-    assertResult(anarchistMelon)(read)
+      read <- rawJson.decodeAs[AnarchistMelon].liftTo[IO]
+    } yield assertEquals(obtained = read, expected = anarchistMelon)
   }
 
   //-----------------------------------------------------------------------------------------------
 
-  it should "... fail to compile when there is no explicitly defined decoder for a type down in the hierarchy" in {
-    assertDoesNotCompile(
-      """
-        |val rawJson = "{}"
-        |rawJson.unsafeDecodeAs[WinterMelon]
-      """.stripMargin
-    )
+  test("... fail to compile when there is no explicitly defined decoder for a type down)the hierarchy") {
+    IO {
+      val errors = compileErrors(
+        """
+          val rawJson = "{}"
+          rawJson.unsafeDecodeAs[WinterMelon]
+         """
+      )
+      assert(
+        cond = errors.contains(
+          """could not find implicit value for parameter decoder: io.circe.Decoder[busymachines.pureharm.json.test.WinterMelon]"""
+        ),
+        clue = s"""|Expected a specific compiler error. But it was:
+                   |
+                   |$errors
+                   |
+                   |""".stripMargin,
+      )
+    }
   }
 
   //-----------------------------------------------------------------------------------------------
 
-  it should "... be able to deserialize case class from hierarchy when it is referred to as its super-type" in {
-    val winterMelon: Melon = WinterMelon(fuzzy = true, weight = 45)
-    val rawJson =
-      """
-        |{
-        |  "fuzzy" : true,
-        |  "weight" : 45,
-        |  "_type" : "WinterMelon"
-        |}
+  test("... be able to deserialize case class from hierarchy when it is referred to as its super-type") {
+    for {
+      winterMelon <- WinterMelon(fuzzy = true, weight = 45).pure[IO].widen[Melon]
+      rawJson =
+        """
+          |{
+          |  "fuzzy" : true,
+          |  "weight" : 45,
+          |  "_type" : "WinterMelon"
+          |}
       """.stripMargin.trim
 
-    val read = rawJson.unsafeDecodeAs[Melon]
-    assertResult(winterMelon)(read)
+      read <- rawJson.decodeAs[Melon].liftTo[IO]
+    } yield assertEquals(obtained = read, expected = winterMelon)
   }
 
   //-----------------------------------------------------------------------------------------------
 
-  it should "... be able to deserialize case objects of the hierarchy" in {
-    val smallMelon: Melon = SmallMelon
-    val rawJson =
-      """
-        |{
-        |  "_type" : "SmallMelon"
-        |}
-      """.stripMargin.trim
-    val read    = rawJson.unsafeDecodeAs[Melon]
-    assertResult(smallMelon)(read)
-  }
-
-  //-----------------------------------------------------------------------------------------------
-
-  it should "... deserialize hierarchies of case objects as enums (i.e. plain strings)" in {
-    val taste: List[Taste] = List(SweetTaste, SourTaste)
-    val rawJson =
-      """
-        |[
-        |  "SweetTaste",
-        |  "SourTaste"
-        |]
+  test("... be able to deserialize case objects of the hierarchy") {
+    for {
+      smallMelon <- SmallMelon.pure[IO].widen[Melon]
+      rawJson =
+        """
+          |{
+          |  "_type" : "SmallMelon"
+          |}
       """.stripMargin.trim
 
-    val read = rawJson.unsafeDecodeAs[List[Taste]]
-    assertResult(read)(taste)
+      read <- rawJson.decodeAs[Melon].liftTo[IO]
+    } yield assertEquals(obtained = read, expected = smallMelon)
   }
 
   //-----------------------------------------------------------------------------------------------
 
-  it should "... deserialize list of all case classes from the hierarchy" in {
-    val winterMelon: Melon = WinterMelon(fuzzy = true, weight = 45)
-    val waterMelon:  Melon = WaterMelon(seeds = true, weight = 90)
-    val smallMelon:  Melon = SmallMelon
-    val squareMelon: Melon = SquareMelon(weight = 10, tastes = Seq(SourTaste, SweetTaste))
-    val melons = List[Melon](winterMelon, waterMelon, smallMelon, squareMelon)
+  test("... deserialize hierarchies of case objects as enums (i.e. plain strings)") {
+    for {
+      taste <- List(SweetTaste, SourTaste).pure[IO].widen[List[Taste]]
+      rawJson =
+        """
+          |[
+          |  "SweetTaste",
+          |  "SourTaste"
+          |]
+      """.stripMargin.trim
 
-    val rawJson =
-      """
-        |
-        |[
-        |  {
-        |    "fuzzy" : true,
-        |    "weight" : 45,
-        |    "_type" : "WinterMelon"
-        |  },
-        |  {
-        |    "seeds" : true,
-        |    "weight" : 90,
-        |    "_type" : "WaterMelon"
-        |  },
-        |  {
-        |    "_type" : "SmallMelon"
-        |  },
-        |  {
-        |    "weight" : 10,
-        |    "tastes" : [
-        |      "SourTaste",
-        |      "SweetTaste"
-        |    ],
-        |    "_type" : "SquareMelon"
-        |  }
-        |]
-        |
+      read <- rawJson.decodeAs[List[Taste]].liftTo[IO]
+    } yield assertEquals(obtained = read, expected = taste)
+  }
+
+  //-----------------------------------------------------------------------------------------------
+
+  test("... deserialize list of all case classes from the hierarchy") {
+    for {
+      winterMelon <- WinterMelon(fuzzy = true, weight = 45).pure[IO].widen[Melon]
+      waterMelon  <- WaterMelon(seeds = true, weight = 90).pure[IO].widen[Melon]
+      smallMelon  <- SmallMelon.pure[IO].widen[Melon]
+      squareMelon <- SquareMelon(weight = 10, tastes = Seq(SourTaste, SweetTaste)).pure[IO].widen[Melon]
+      melons      <- List[Melon](winterMelon, waterMelon, smallMelon, squareMelon).pure[IO]
+
+      rawJson =
+        """
+          |
+          |[
+          |  {
+          |    "fuzzy" : true,
+          |    "weight" : 45,
+          |    "_type" : "WinterMelon"
+          |  },
+          |  {
+          |    "seeds" : true,
+          |    "weight" : 90,
+          |    "_type" : "WaterMelon"
+          |  },
+          |  {
+          |    "_type" : "SmallMelon"
+          |  },
+          |  {
+          |    "weight" : 10,
+          |    "tastes" : [
+          |      "SourTaste",
+          |      "SweetTaste"
+          |    ],
+          |    "_type" : "SquareMelon"
+          |  }
+          |]
+          |
         """.stripMargin.trim
 
-    val read: List[Melon] = rawJson.unsafeDecodeAs[List[Melon]]
-    assertResult(melons)(read)
+      read <- rawJson.decodeAs[List[Melon]].liftTo[IO]
+    } yield assertEquals(obtained = read, expected = melons)
   }
 
   //-----------------------------------------------------------------------------------------------
 
-  //-----------------------------------------------------------------------------------------------
-
-  //-----------------------------------------------------------------------------------------------
-
-  //-----------------------------------------------------------------------------------------------
-
-  //-----------------------------------------------------------------------------------------------
 }

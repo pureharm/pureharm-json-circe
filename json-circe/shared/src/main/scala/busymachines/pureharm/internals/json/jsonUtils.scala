@@ -62,7 +62,7 @@ object JsonParsing {
 
   def unsafeParseString(input: String): Json =
     JsonParsing.parseString(input) match {
-      case Left(e) => throw e
+      case Left(e)  => throw e
       case Right(v) => v
     }
 

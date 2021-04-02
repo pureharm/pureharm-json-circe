@@ -17,7 +17,7 @@
 package busymachines.pureharm.json.test.derivetest
 
 import busymachines.pureharm.effects._
-//import busymachines.pureharm.effects.implicits._
+import busymachines.pureharm.effects.implicits._
 import busymachines.pureharm.json.implicits._
 import busymachines.pureharm.json.test._
 
@@ -35,21 +35,20 @@ final class JsonDefaultSemiAutoEncoderDerivationTest extends JsonTest {
   //-----------------------------------------------------------------------------------------------
 
   test("... be able to serialize anarchist melon (i.e. not part of any hierarchy)") {
-    IO {
-      val anarchistMelon = AnarchistMelon(noGods = true, noMasters = true, noSuperTypes = true)
-      val rawJson        = anarchistMelon.asJson.spaces2
+    for {
+      anarchistMelon <- AnarchistMelon(noGods = true, noMasters = true, noSuperTypes = true).pure[IO]
+      rawJson = anarchistMelon.asJson.spaces2
 
-      assertEquals(
+      _ = assertEquals(
         obtained = rawJson,
-        expected = """
-                     |{
-                     |  "noGods" : true,
-                     |  "noMasters" : true,
-                     |  "noSuperTypes" : true
-                     |}
-      """.stripMargin.trim,
+        expected = """|
+                      |{
+                      |  "noGods" : true,
+                      |  "noMasters" : true,
+                      |  "noSuperTypes" : true
+                      |}""".stripMargin.trim,
       )
-    }
+    } yield ()
   }
 
   //-----------------------------------------------------------------------------------------------
@@ -78,12 +77,11 @@ final class JsonDefaultSemiAutoEncoderDerivationTest extends JsonTest {
   //-----------------------------------------------------------------------------------------------
 
   test("... be able to serialize case class from hierarchy when it is referred to as its super-type") {
-    IO {
+    for {
+      winterMelon <- WinterMelon(fuzzy = true, weight = 45).pure[IO].widen[Melon]
+      rawJson = winterMelon.asJson.spaces2
 
-      val winterMelon: Melon = WinterMelon(fuzzy = true, weight = 45)
-      val rawJson = winterMelon.asJson.spaces2
-
-      assertEquals(
+      _ = assertEquals(
         obtained = rawJson,
         expected = """
                      |{
@@ -93,16 +91,17 @@ final class JsonDefaultSemiAutoEncoderDerivationTest extends JsonTest {
                      |}
       """.stripMargin.trim,
       )
-    }
+    } yield ()
   }
 
   //-----------------------------------------------------------------------------------------------
 
   test("... be able to serialize case objects of the hierarchy") {
-    IO {
-      val smallMelon: Melon = SmallMelon
-      val rawJson = smallMelon.asJson.spaces2
-      assertEquals(
+    for {
+      smallMelon <- SmallMelon.pure[IO].widen[Melon]
+      rawJson = smallMelon.asJson.spaces2
+
+      _ = assertEquals(
         obtained = rawJson,
         expected = """
                      |{
@@ -110,17 +109,17 @@ final class JsonDefaultSemiAutoEncoderDerivationTest extends JsonTest {
                      |}
       """.stripMargin.trim,
       )
-    }
+    } yield ()
   }
 
   //-----------------------------------------------------------------------------------------------
 
   test("... serialize hierarchies of case objects as enums (i.e. plain strings)") {
-    IO {
-      val taste: List[Taste] = List(SweetTaste, SourTaste)
+    for {
+      taste <- List(SweetTaste, SourTaste).pure[IO].widen[List[Taste]]
+      rawJson = taste.asJson.spaces2
 
-      val rawJson = taste.asJson.spaces2
-      assertEquals(
+      _ = assertEquals(
         obtained = rawJson,
         expected = """
                      |[
@@ -129,21 +128,22 @@ final class JsonDefaultSemiAutoEncoderDerivationTest extends JsonTest {
                      |]
       """.stripMargin.trim,
       )
-    }
+    } yield ()
   }
 
   //-----------------------------------------------------------------------------------------------
 
   test("... serialize list of all case classes from the hierarchy") {
-    IO {
-      val winterMelon: Melon = WinterMelon(fuzzy = true, weight = 45)
-      val waterMelon:  Melon = WaterMelon(seeds = true, weight = 90)
-      val smallMelon:  Melon = SmallMelon
-      val squareMelon: Melon = SquareMelon(weight = 10, tastes = Seq(SourTaste, SweetTaste))
-      val melons = List[Melon](winterMelon, waterMelon, smallMelon, squareMelon)
+    for {
+      winterMelon <- WinterMelon(fuzzy = true, weight = 45).pure[IO].widen[Melon]
+      waterMelon  <- WaterMelon(seeds = true, weight = 90).pure[IO].widen[Melon]
+      smallMelon  <- SmallMelon.pure[IO].widen[Melon]
+      squareMelon <- SquareMelon(weight = 10, tastes = Seq(SourTaste, SweetTaste)).pure[IO].widen[Melon]
+      melons = List[Melon](winterMelon, waterMelon, smallMelon, squareMelon)
 
-      val rawJson = melons.asJson.spaces2
-      assertEquals(
+      rawJson = melons.asJson.spaces2
+
+      _ = assertEquals(
         obtained = rawJson,
         expected = """
                      |
@@ -173,7 +173,7 @@ final class JsonDefaultSemiAutoEncoderDerivationTest extends JsonTest {
                      |
       """.stripMargin.trim,
       )
-    }
+    } yield ()
 
   }
   //-----------------------------------------------------------------------------------------------

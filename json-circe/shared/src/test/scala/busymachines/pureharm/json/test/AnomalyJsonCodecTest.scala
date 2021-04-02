@@ -65,182 +65,183 @@ final class AnomalyJsonCodecTest extends JsonTest {
   }
 
   test("... encode a UnauthorizedAnomaly") {
-    IO {
-      val failure: AnomalyBase = UnauthorizedAnomaly(
+    for {
+      failure <- UnauthorizedAnomaly(
         "test message",
         Anomaly.Parameters(
           "one" -> "one",
           "two" -> List("one", "two"),
         ),
+      ).pure[IO].widen[AnomalyBase]
+
+      rawJson = failure.asJson.spaces2
+
+      _ = assertEquals(
+        obtained = rawJson,
+        expected = """|{
+                      |  "id" : "1",
+                      |  "message" : "test message",
+                      |  "parameters" : {
+                      |    "one" : "one",
+                      |    "two" : [
+                      |      "one",
+                      |      "two"
+                      |    ]
+                      |  }
+                      |}
+                      |""".stripMargin.trim,
       )
 
-      val rawJson = failure.asJson.spaces2
-      assert(
-        rawJson ==
-          """{
-            |  "id" : "1",
-            |  "message" : "test message",
-            |  "parameters" : {
-            |    "one" : "one",
-            |    "two" : [
-            |      "one",
-            |      "two"
-            |    ]
-            |  }
-            |}
-            |""".stripMargin.trim
-      )
-
-      val read = rawJson.unsafeDecodeAs[AnomalyBase]
-
-      assert(read.id.name == failure.id.name, "id")
-      assert(read.message == failure.message, "message")
-      assert(read.parameters == failure.parameters, "parameters")
-    }
-
+      read <- rawJson.decodeAs[AnomalyBase].liftTo[IO]
+      _ = assertEquals(obtained = read.id, expected = failure.id, "id")
+      _ = assertEquals(obtained = read.message, expected = failure.message, "message")
+      _ = assertEquals(obtained = read.parameters, expected = failure.parameters, "parameters")
+    } yield ()
   }
 
   test("... encode a ForbiddenAnomaly") {
-    IO {
-      val failure: AnomalyBase = ForbiddenAnomaly(
+    for {
+      failure <- ForbiddenAnomaly(
         "test message",
         Anomaly.Parameters(
           "one" -> "one",
           "two" -> List("one", "two"),
         ),
+      ).pure[IO].widen[AnomalyBase]
+
+      rawJson = failure.asJson.spaces2
+
+      _ = assertEquals(
+        obtained = rawJson,
+        expected = """|{
+                      |  "id" : "2",
+                      |  "message" : "test message",
+                      |  "parameters" : {
+                      |    "one" : "one",
+                      |    "two" : [
+                      |      "one",
+                      |      "two"
+                      |    ]
+                      |  }
+                      |}
+                      |""".stripMargin.trim,
       )
 
-      val rawJson = failure.asJson.spaces2
-      assert(
-        rawJson ==
-          """{
-            |  "id" : "2",
-            |  "message" : "test message",
-            |  "parameters" : {
-            |    "one" : "one",
-            |    "two" : [
-            |      "one",
-            |      "two"
-            |    ]
-            |  }
-            |}
-            |""".stripMargin.trim
-      )
-
-      val read = rawJson.unsafeDecodeAs[AnomalyBase]
-      assert(read.id.name == failure.id.name, "id")
-      assert(read.message == failure.message, "message")
-      assert(read.parameters == failure.parameters, "parameters")
-    }
-
+      read <- rawJson.decodeAs[AnomalyBase].liftTo[IO]
+      _ = assertEquals(obtained = read.id, expected = failure.id, "id")
+      _ = assertEquals(obtained = read.message, expected = failure.message, "message")
+      _ = assertEquals(obtained = read.parameters, expected = failure.parameters, "parameters")
+    } yield ()
   }
 
   test("... encode a DeniedAnomaly") {
-    IO {
-      val failure: AnomalyBase = DeniedAnomaly(
+    for {
+      failure <- DeniedAnomaly(
         "test message",
         Anomaly.Parameters(
           "one" -> "one",
           "two" -> List("one", "two"),
         ),
+      ).pure[IO].widen[AnomalyBase]
+
+      rawJson = failure.asJson.spaces2
+
+      _ = assertEquals(
+        obtained = rawJson,
+        expected = """|{
+                      |  "id" : "3",
+                      |  "message" : "test message",
+                      |  "parameters" : {
+                      |    "one" : "one",
+                      |    "two" : [
+                      |      "one",
+                      |      "two"
+                      |    ]
+                      |  }
+                      |}
+                      |""".stripMargin.trim,
       )
 
-      val rawJson = failure.asJson.spaces2
-      assert(
-        rawJson ==
-          """{
-            |  "id" : "3",
-            |  "message" : "test message",
-            |  "parameters" : {
-            |    "one" : "one",
-            |    "two" : [
-            |      "one",
-            |      "two"
-            |    ]
-            |  }
-            |}
-            |""".stripMargin.trim
-      )
-
-      val read = rawJson.unsafeDecodeAs[AnomalyBase]
-      assert(read.id.name == failure.id.name, "id")
-      assert(read.message == failure.message, "message")
-      assert(read.parameters == failure.parameters, "parameters")
-    }
+      read <- rawJson.decodeAs[AnomalyBase].liftTo[IO]
+      _ = assertEquals(obtained = read.id, expected = failure.id, "id")
+      _ = assertEquals(obtained = read.message, expected = failure.message, "message")
+      _ = assertEquals(obtained = read.parameters, expected = failure.parameters, "parameters")
+    } yield ()
   }
 
   test("... encode a InvalidInputAnomaly") {
-    IO {
-      val failure: AnomalyBase = InvalidInputAnomaly(
+    for {
+      failure <- InvalidInputAnomaly(
         "test message",
         Anomaly.Parameters(
           "one" -> "one",
           "two" -> List("one", "two"),
         ),
+      ).pure[IO].widen[AnomalyBase]
+
+      rawJson = failure.asJson.spaces2
+
+      _ = assertEquals(
+        obtained = rawJson,
+        expected = """|{
+                      |  "id" : "4",
+                      |  "message" : "test message",
+                      |  "parameters" : {
+                      |    "one" : "one",
+                      |    "two" : [
+                      |      "one",
+                      |      "two"
+                      |    ]
+                      |  }
+                      |}
+                      |""".stripMargin.trim,
       )
 
-      val rawJson = failure.asJson.spaces2
-      assert(
-        rawJson ==
-          """{
-            |  "id" : "4",
-            |  "message" : "test message",
-            |  "parameters" : {
-            |    "one" : "one",
-            |    "two" : [
-            |      "one",
-            |      "two"
-            |    ]
-            |  }
-            |}
-            |""".stripMargin.trim
-      )
-
-      val read = rawJson.unsafeDecodeAs[AnomalyBase]
-      assert(read.id.name == failure.id.name, "id")
-      assert(read.message == failure.message, "message")
-      assert(read.parameters == failure.parameters, "parameters")
-    }
+      read <- rawJson.decodeAs[AnomalyBase].liftTo[IO]
+      _ = assertEquals(obtained = read.id, expected = failure.id, "id")
+      _ = assertEquals(obtained = read.message, expected = failure.message, "message")
+      _ = assertEquals(obtained = read.parameters, expected = failure.parameters, "parameters")
+    } yield ()
   }
 
   test("... encode a ConflictAnomaly") {
-    IO {
-      val failure: AnomalyBase = ConflictAnomaly(
+    for {
+      failure <- ConflictAnomaly(
         "test message",
         Anomaly.Parameters(
           "one" -> "one",
           "two" -> List("one", "two"),
         ),
+      ).pure[IO].widen[AnomalyBase]
+
+      rawJson = failure.asJson.spaces2
+
+      _ = assertEquals(
+        obtained = rawJson,
+        expected = """|{
+                      |  "id" : "5",
+                      |  "message" : "test message",
+                      |  "parameters" : {
+                      |    "one" : "one",
+                      |    "two" : [
+                      |      "one",
+                      |      "two"
+                      |    ]
+                      |  }
+                      |}
+                      |""".stripMargin.trim,
       )
 
-      val rawJson = failure.asJson.spaces2
-      assert(
-        rawJson ==
-          """{
-            |  "id" : "5",
-            |  "message" : "test message",
-            |  "parameters" : {
-            |    "one" : "one",
-            |    "two" : [
-            |      "one",
-            |      "two"
-            |    ]
-            |  }
-            |}
-            |""".stripMargin.trim
-      )
-
-      val read = rawJson.unsafeDecodeAs[AnomalyBase]
-      assert(read.id.name == failure.id.name, "id")
-      assert(read.message == failure.message, "message")
-      assert(read.parameters == failure.parameters, "parameters")
-    }
-
+      read <- rawJson.decodeAs[AnomalyBase].liftTo[IO]
+      _ = assertEquals(obtained = read.id, expected = failure.id, "id")
+      _ = assertEquals(obtained = read.message, expected = failure.message, "message")
+      _ = assertEquals(obtained = read.parameters, expected = failure.parameters, "parameters")
+    } yield ()
   }
 
   test("... encode Anomalies") {
-    IO {
-      val failure: AnomalyBase = Anomalies(
+    for {
+      failure <- Anomalies(
         AnomalyID("test"),
         "test message",
         NotFoundAnomaly(
@@ -257,58 +258,60 @@ final class AnomalyJsonCodecTest extends JsonTest {
             "6" -> List("6", "7"),
           ),
         ),
-      )
-      val rawJson = failure.asJson.spaces2
-      assert(
-        rawJson ==
-          """
-            |{
-            |  "id" : "test",
-            |  "message" : "test message",
-            |  "messages" : [
-            |    {
-            |      "id" : "0",
-            |      "message" : "one",
-            |      "parameters" : {
-            |        "3" : "1",
-            |        "4" : [
-            |          "1",
-            |          "2"
-            |        ]
-            |      }
-            |    },
-            |    {
-            |      "id" : "0",
-            |      "message" : "two",
-            |      "parameters" : {
-            |        "5" : "6",
-            |        "6" : [
-            |          "6",
-            |          "7"
-            |        ]
-            |      }
-            |    }
-            |  ]
-            |}
-            |""".stripMargin.trim
+      ).pure[IO].widen[AnomalyBase]
+
+      rawJson = failure.asJson.spaces2
+
+      _ = assertEquals(
+        obtained = rawJson,
+        expected = """
+                     |{
+                     |  "id" : "test",
+                     |  "message" : "test message",
+                     |  "messages" : [
+                     |    {
+                     |      "id" : "0",
+                     |      "message" : "one",
+                     |      "parameters" : {
+                     |        "3" : "1",
+                     |        "4" : [
+                     |          "1",
+                     |          "2"
+                     |        ]
+                     |      }
+                     |    },
+                     |    {
+                     |      "id" : "0",
+                     |      "message" : "two",
+                     |      "parameters" : {
+                     |        "5" : "6",
+                     |        "6" : [
+                     |          "6",
+                     |          "7"
+                     |        ]
+                     |      }
+                     |    }
+                     |  ]
+                     |}
+                     |""".stripMargin.trim,
       )
 
-      val read = rawJson.unsafeDecodeAs[AnomalyBase]
-      read match {
+      read <- rawJson.decodeAs[AnomalyBase].liftTo[IO]
+      _ = assert(read.isInstanceOf[AnomaliesBase], clue = "should have decoded as AnomaliesBase")
+      _ = assertEquals(obtained = read.id, expected = failure.id, "id")
+      _ = assertEquals(obtained = read.message, expected = failure.message, "message")
+      _ = assertEquals(obtained = read.parameters, expected = failure.parameters, "parameters")
+      _ = read match {
         case as: AnomaliesBase =>
-          assert(read.id.name == failure.id.name, "id")
-          assert(read.message == failure.message, "message")
-          assert(read.parameters == failure.parameters, "parameters")
           assert(as.messages.length == 2, "# of messages")
         case _ => fail("should have decoded as AnomaliesBase")
       }
-    }
-
+    } yield ()
   }
 
   test("... encode Throwable") {
-    IO {
-      val failure: Throwable = Anomalies(
+    for {
+      failure <- Anomalies(
         AnomalyID("test"),
         "test message",
         NotFoundAnomaly(
@@ -325,69 +328,67 @@ final class AnomalyJsonCodecTest extends JsonTest {
             "6" -> List("6", "7"),
           ),
         ),
-      )
-      val rawJson = failure.asJson.spaces2
-      assert(
-        rawJson ==
-          """
-            |{
-            |  "id" : "test",
-            |  "message" : "test message",
-            |  "messages" : [
-            |    {
-            |      "id" : "0",
-            |      "message" : "one",
-            |      "parameters" : {
-            |        "3" : "1",
-            |        "4" : [
-            |          "1",
-            |          "2"
-            |        ]
-            |      }
-            |    },
-            |    {
-            |      "id" : "0",
-            |      "message" : "two",
-            |      "parameters" : {
-            |        "5" : "6",
-            |        "6" : [
-            |          "6",
-            |          "7"
-            |        ]
-            |      }
-            |    }
-            |  ]
-            |}
-            |""".stripMargin.trim
+      ).pure[IO].widen[Throwable]
+
+      rawJson = failure.asJson.spaces2
+
+      _ = assertEquals(
+        obtained = rawJson,
+        expected = """
+                     |{
+                     |  "id" : "test",
+                     |  "message" : "test message",
+                     |  "messages" : [
+                     |    {
+                     |      "id" : "0",
+                     |      "message" : "one",
+                     |      "parameters" : {
+                     |        "3" : "1",
+                     |        "4" : [
+                     |          "1",
+                     |          "2"
+                     |        ]
+                     |      }
+                     |    },
+                     |    {
+                     |      "id" : "0",
+                     |      "message" : "two",
+                     |      "parameters" : {
+                     |        "5" : "6",
+                     |        "6" : [
+                     |          "6",
+                     |          "7"
+                     |        ]
+                     |      }
+                     |    }
+                     |  ]
+                     |}
+                     |""".stripMargin.trim,
       )
 
-      val anomaly = failure.asInstanceOf[Anomalies]
-      val read    = rawJson.unsafeDecodeAs[Throwable]
-      read match {
+      read <- rawJson.decodeAs[AnomalyBase].liftTo[IO]
+      _ = read match {
         case as: AnomaliesBase =>
+          val anomaly = failure.asInstanceOf[Anomalies]
           assert(as.id.name == anomaly.id.name, "id")
           assert(as.message == anomaly.message, "message")
           assert(as.parameters == anomaly.parameters, "parameters")
           assert(as.messages.length == 2, "# of messages")
         case _ => fail("should have decoded as AnomaliesBase")
       }
-    }
-
+    } yield ()
   }
 
   test("... fail when decoding and empty Anomalies") {
-    IO {
-      val rawJson =
-        """
-          |{
-          |  "id" : "test",
-          |  "message" : "test message",
-          |  "messages" : []
-          |}
-          |""".stripMargin.trim
-
-      interceptFailure[Throwable](rawJson.decodeAs[AnomalyBase])
-    }
-
+    for {
+      rawJson <- """
+                   |{
+                   |  "id" : "test",
+                   |  "message" : "test message",
+                   |  "messages" : []
+                   |}
+                   |""".stripMargin.trim.pure[IO]
+      _ = interceptFailure[Throwable](rawJson.decodeAs[AnomalyBase])
+    } yield ()
   }
 }

@@ -17,6 +17,7 @@
 package busymachines.pureharm.json.test.derivetest
 
 import busymachines.pureharm.effects._
+import busymachines.pureharm.effects.implicits._
 import busymachines.pureharm.json._
 import busymachines.pureharm.json.implicits._
 import busymachines.pureharm.json.test._
@@ -37,8 +38,8 @@ final class JsonDerivationNestedTypesTest1 extends JsonTest {
   implicit protected val outdoorMelonCodec: Codec[OutdoorMelon]        = derive.codec[OutdoorMelon]
 
   test("... derive for case classes defined within objects — normal codecs") {
-    IO {
-      val stringyJson =
+    for {
+      stringyJson <-
         """
           |{
           |  "weight" : 42,
@@ -47,13 +48,14 @@ final class JsonDerivationNestedTypesTest1 extends JsonTest {
           |  },
           |  "_type" : "WildMelon"
           |}
-      """.stripMargin.trim
+      """.stripMargin.trim.pure[IO]
 
-      val json = outdoorMelon.asJson
+      json = outdoorMelon.asJson
 
-      assertEquals(obtained = json.spaces2NoNulls, expected                      = stringyJson, "encoder")
-      assertEquals(obtained = stringyJson.unsafeDecodeAs[OutdoorMelon], expected = outdoorMelon, "decoder")
-    }
+      _ = assertEquals(obtained = json.spaces2NoNulls, expected = stringyJson, "encoder")
+      _ = assertEquals(obtained = stringyJson.unsafeDecodeAs[OutdoorMelon], expected = outdoorMelon, "decoder")
+    } yield ()
+
   }
 
   //-----------------------------------------------------------------------------------------------
@@ -73,21 +75,21 @@ final class JsonDerivationNestedTypesTest2 extends JsonTest {
   implicit protected val outdoorMelonCodec: Codec[OutdoorMelon]        = derive.codec[OutdoorMelon]
 
   test("... derive for case classes defined within objects — enumerationCodec") {
-    IO {
-      val stringyJson =
+    for {
+      stringyJson <-
         """
           |{
           |  "weight" : 42,
           |  "color" : "Green",
           |  "_type" : "WildMelon"
           |}
-      """.stripMargin.trim
+      """.stripMargin.trim.pure[IO]
 
-      val json = outdoorMelon.asJson
+      json = outdoorMelon.asJson
 
-      assertEquals(obtained = json.spaces2NoNulls, expected                      = stringyJson, "encoder")
-      assertEquals(obtained = stringyJson.unsafeDecodeAs[OutdoorMelon], expected = outdoorMelon, "decoder")
-    }
+      _ = assertEquals(obtained = json.spaces2NoNulls, expected = stringyJson, "encoder")
+      _ = assertEquals(obtained = stringyJson.unsafeDecodeAs[OutdoorMelon], expected = outdoorMelon, "decoder")
+    } yield ()
 
   }
 

@@ -16,6 +16,7 @@
 
 package busymachines.pureharm.json.test.derivetest
 
+@scala.deprecated("use the one from pureharm-core-anomaly", "0.1.0")
 object ThrowableShow {
   implicit val showThrowable: cats.Show[Throwable] = cats.Show.fromToString[Throwable]
 }

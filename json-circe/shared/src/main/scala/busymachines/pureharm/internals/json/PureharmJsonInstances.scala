@@ -16,9 +16,6 @@
 
 package busymachines.pureharm.internals.json
 
-import scala.annotation.implicitNotFound
-
-import cats._
 import cats.implicits._
 import busymachines.pureharm.sprout._
 import io.circe.{Decoder, Encoder}
@@ -40,14 +37,10 @@ object PureharmJsonInstances {
       decoder: Decoder[Old],
     ): Decoder[New] = decoder.map(newType.newType)
 
-    implicit final def pureharmSproutRefinedCirceDecoder[Old, New, E](implicit
-      newType: RefinedType[Old, New, E],
+    implicit final def pureharmSproutRefinedCirceDecoder[Old, New](implicit
+      newType: RefinedTypeThrow[Old, New],
       decoder: Decoder[Old],
-      @implicitNotFound(
-        """Deriving a io.circe.Decoder[${Phantom}] for refined sprout types, requires you to have a Show[${E}] in scope. If your error is of type Throwable, then pureharm.effects.implicits._ contains a Show instance for it. If you used pureharm style, then myapp.effects._ package should have one"""
-      )
-      show:    Show[E],
-    ): Decoder[New] = decoder.emap(u => newType.newType[Either[E, *]](u).leftMap(_.show))
+    ): Decoder[New] = decoder.emap(u => newType.newType[Either[Throwable, *]](u).leftMap(_.toString()))
 
   }
 

@@ -20,8 +20,10 @@
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
-val Scala213  = "2.13.5"
-val Scala3RC1 = "3.0.0-RC1"
+// format: off
+val Scala213        = "2.13.6"
+val Scala3          = "3.0.1"
+// format: on
 
 //=============================================================================
 //============================ publishing details =============================
@@ -30,7 +32,7 @@ val Scala3RC1 = "3.0.0-RC1"
 //see: https://github.com/xerial/sbt-sonatype#buildsbt
 ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
 
-ThisBuild / baseVersion      := "0.2"
+ThisBuild / baseVersion      := "0.3"
 ThisBuild / organization     := "com.busymachines"
 ThisBuild / organizationName := "BusyMachines"
 ThisBuild / homepage         := Option(url("https://github.com/busymachines/pureharm-json-circe"))
@@ -72,8 +74,8 @@ ThisBuild / crossScalaVersions := List(Scala213) //List(Scala213, Scala3RC1)
 
 //required for binary compat checks
 ThisBuild / versionIntroduced := Map(
-  Scala213  -> "0.1.0",
-  Scala3RC1 -> "0.1.0",
+  Scala213 -> "0.1.0",
+  Scala3   -> "0.3.0",
 )
 
 //=============================================================================
@@ -81,12 +83,14 @@ ThisBuild / versionIntroduced := Map(
 //=============================================================================
 ThisBuild / resolvers += Resolver.sonatypeRepo("releases")
 ThisBuild / resolvers += Resolver.sonatypeRepo("snapshots")
+
 // format: off
-val pureharmCoreV       = "0.2.0"       //https://github.com/busymachines/pureharm-core/releases
-val circeV              = "0.13.0"      //https://github.com/circe/circe/releases
-val pureharmTestkitV    = "0.2.0"       //https://github.com/busymachines/pureharm-testkit/releases
-val log4catsV           = "1.2.2"       //https://github.com/typelevel/log4cats/releases
+val pureharmCoreV       = "0.3.0"       //https://github.com/busymachines/pureharm-core/releases
+val circeV              = "0.14.1"      //https://github.com/circe/circe/releases
+val pureharmTestkitV    = "0.4.0"       //https://github.com/busymachines/pureharm-testkit/releases
+val log4catsV           = "2.1.1"       //https://github.com/typelevel/log4cats/releases
 // format: on
+
 //=============================================================================
 //============================== Project details ==============================
 //=============================================================================
@@ -121,7 +125,6 @@ lazy val `json-circeJVM` = `json-circe`.jvm.settings(
 )
 
 lazy val `json-circeJS` = `json-circe`
-  .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .jsSettings(
     scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule))
   )

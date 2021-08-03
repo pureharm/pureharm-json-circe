@@ -16,15 +16,18 @@
 
 package busymachines.pureharm.json
 
-/** @author
-  *   Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 11
-  *   Jun 2019
+import io.circe.generic.decoding
+import io.circe.generic.encoding
+import io.circe.generic.{codec => circeCodec}
+import shapeless.Lazy
+
+/** Simple forwarders from io.circe.generic.semiauto, useful for custom implicit messages and better UX.
   */
-@scala.deprecated(
-  "Use derived instead which DOES NOT SUPPORT deriving sealed traits w/ _type discriminator, since this feature is not available on Scala 3 + circe 0.14.1, so you have to manually migrate all codecs of sealed traits to not break your pre-existing JSON in APIs and DBs. Good luck.",
-  "0.3.0",
-)
-object derive    extends GenericExtrasSemiAutoDerivation
-object derived   extends GenericSemiAutoDerivation
-object implicits extends PureharmJsonImplicits
+trait GenericSemiAutoDerivation {
+  final def decoder[A](implicit decode: Lazy[decoding.DerivedDecoder[A]]): Decoder[A] = decode.value
+
+  final def encoder[A](implicit encode: Lazy[encoding.DerivedAsObjectEncoder[A]]): Encoder.AsObject[A] =
+    encode.value
+
+  final def codec[A](implicit codec: Lazy[circeCodec.DerivedAsObjectCodec[A]]): Codec.AsObject[A] = codec.value
+}

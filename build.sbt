@@ -70,7 +70,8 @@ ThisBuild / spiewakMainBranches       := List("main")
 ThisBuild / Test / publishArtifact    := false
 
 ThisBuild / scalaVersion       := Scala213
-ThisBuild / crossScalaVersions := List(Scala213) //List(Scala213, Scala3RC1)
+ThisBuild / crossScalaVersions := List(Scala213)
+// ThisBuild / crossScalaVersions := List(Scala213, Scala3)
 
 //required for binary compat checks
 ThisBuild / versionIntroduced := Map(
@@ -109,15 +110,35 @@ lazy val `json-circe` = crossProject(JVMPlatform, JSPlatform)
   .settings(commonSettings)
   .settings(
     name := "pureharm-json-circe",
-    libraryDependencies ++= Seq(
-      "io.circe"         %%% "circe-core"            % circeV        withSources (),
-      "io.circe"         %%% "circe-generic-extras"  % circeV        withSources (),
-      "io.circe"         %%% "circe-parser"          % circeV        withSources (),
-      "com.busymachines" %%% "pureharm-core-anomaly" % pureharmCoreV withSources (),
-      "com.busymachines" %%% "pureharm-core-sprout"  % pureharmCoreV withSources (),
-      "com.busymachines" %%% "pureharm-testkit"      % pureharmTestkitV        % Test withSources (),
-      "org.typelevel"    %%% "log4cats-noop"         % log4catsV               % Test withSources (),
-    ),
+    libraryDependencies ++= (CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((2, _)) =>
+        Seq(
+          // on Scala 2 we have circe-generic-extras to give us that _type discriminator
+          // format: off
+          "io.circe"            %%% "circe-core"                % circeV                     withSources(),
+          "io.circe"            %%% "circe-parser"              % circeV                     withSources(),
+          "io.circe"            %%% "circe-generic"             % circeV                     withSources(),
+          "io.circe"            %%% "circe-generic-extras"      % circeV                     withSources(),
+          "com.busymachines"    %%% "pureharm-core-anomaly"     % pureharmCoreV              withSources(),
+          "com.busymachines"    %%% "pureharm-core-sprout"      % pureharmCoreV              withSources(),
+          "com.busymachines"    %%% "pureharm-testkit"          % pureharmTestkitV    % Test withSources(),
+          "org.typelevel"       %%% "log4cats-noop"             % log4catsV           % Test withSources(),
+          // format: on
+        )
+      case _            =>
+        //in Scala 3 we have no circe-generic-extras
+        Seq(
+          // format: off
+          "io.circe"            %%% "circe-core"                % circeV                     withSources(),
+          "io.circe"            %%% "circe-parser"              % circeV                     withSources(),
+          "io.circe"            %%% "circe-generic"             % circeV                     withSources(),
+          "com.busymachines"    %%% "pureharm-core-anomaly"     % pureharmCoreV              withSources(),
+          "com.busymachines"    %%% "pureharm-core-sprout"      % pureharmCoreV              withSources(),
+          "com.busymachines"    %%% "pureharm-testkit"          % pureharmTestkitV    % Test withSources(),
+          "org.typelevel"       %%% "log4cats-noop"             % log4catsV           % Test withSources(),
+          // format: on
+        )
+    }),
   )
 
 lazy val `json-circeJVM` = `json-circe`.jvm.settings(

@@ -17,7 +17,6 @@
 package busymachines.pureharm.json
 
 import scala.annotation.implicitNotFound
-
 import io.circe.generic.extras.codec.ConfiguredAsObjectCodec
 import io.circe.generic.extras.{decoding, encoding, semiauto => circeSemiAuto}
 import shapeless.Lazy
@@ -30,9 +29,16 @@ import shapeless.Lazy
   * @since 11
   *   Jun 2019
   */
-trait SemiAutoDerivation {
-  final type DerivationHelper[A] = io.circe.generic.extras.semiauto.DerivationHelper[A]
+@scala.deprecated(
+  "For Scala 3 support this method of derivation does not exist, and you should migrate to using GenericSemiAutoDerivation which does not have _type discriminator for sealed traits, only the default circe. So it's not a trivial migration. If you derived only case classes, then the migration is trivial and nothing breaks",
+  "0.3.0",
+)
+trait GenericExtrasSemiAutoDerivation {
 
+  @scala.deprecated(
+    "For Scala 3 support this method of derivation does not exist, and you should migrate to using GenericSemiAutoDerivation which does not have _type discriminator for sealed traits, only the default circe. So it's not a trivial migration. If you derived only case classes, then the migration is trivial and nothing breaks",
+    "0.3.0",
+  )
   final def decoder[A](implicit
     // format: off
   @implicitNotFound(
@@ -66,6 +72,10 @@ Deriving decoders in pureharm style can run into one of the several problems:
   ): Decoder[A] =
     circeSemiAuto.deriveConfiguredDecoder[A](decode)
 
+  @scala.deprecated(
+    "For Scala 3 support this method of derivation does not exist, and you should migrate to using GenericSemiAutoDerivation which does not have _type discriminator for sealed traits, only the default circe. So it's not a trivial migration. If you derived only case classes, then the migration is trivial and nothing breaks",
+    "0.3.0",
+  )
   final def encoder[A](implicit
     // format: off
     @implicitNotFound(
@@ -99,6 +109,10 @@ Deriving encoders in pureharm style can run into one of the several problems:
   ): Encoder.AsObject[A] =
     circeSemiAuto.deriveConfiguredEncoder[A](encode)
 
+  @scala.deprecated(
+    "For Scala 3 support this method of derivation does not exist, and you should migrate to using GenericSemiAutoDerivation which does not have _type discriminator for sealed traits, only the default circe. So it's not a trivial migration. If you derived only case classes, then the migration is trivial and nothing breaks",
+    "0.3.0",
+  )
   final def codec[A](implicit
     // format: off
 @implicitNotFound(
@@ -134,6 +148,10 @@ Deriving codecs in pureharm style can run into one of the several problems:
     codec: Lazy[ConfiguredAsObjectCodec[A]]
   ): Codec.AsObject[A] = codec.value
 
+  @scala.deprecated(
+    "For Scala 3 support this method of derivation does not exist, and you should migrate to using GenericSemiAutoDerivation which does not have _type discriminator for sealed traits, only the default circe. So it's not a trivial migration. If you derived only case classes, then the migration is trivial and nothing breaks",
+    "0.3.0",
+  )
   final def enumerationDecoder[A](implicit
     // format: off
     @implicitNotFound(
@@ -147,6 +165,10 @@ Deriving Decoder for enumerations can run into the following problem:
     decode: Lazy[decoding.EnumerationDecoder[A]]
   ): Decoder[A] = circeSemiAuto.deriveEnumerationDecoder[A]
 
+  @scala.deprecated(
+    "For Scala 3 support this method of derivation does not exist, and you should migrate to using GenericSemiAutoDerivation which does not have _type discriminator for sealed traits, only the default circe. So it's not a trivial migration. If you derived only case classes, then the migration is trivial and nothing breaks",
+    "0.3.0",
+  )
   final def enumerationEncoder[A](implicit
     // format: off
   @implicitNotFound(
@@ -160,6 +182,10 @@ Deriving Encoder for enumerations can run into the following problem:
     encode: Lazy[encoding.EnumerationEncoder[A]]
   ): Encoder[A] = circeSemiAuto.deriveEnumerationEncoder[A]
 
+  @scala.deprecated(
+    "For Scala 3 support this method of derivation does not exist, and you should migrate to using GenericSemiAutoDerivation",
+    "0.3.0",
+  )
   final def enumerationCodec[A](implicit
     // format: off
   @implicitNotFound(
@@ -185,6 +211,4 @@ Deriving Decoder for enumerations can run into the following problem:
     decode: Lazy[decoding.EnumerationDecoder[A]],
   ): Codec[A] = Codec.from[A](decode.value, encode.value)
 
-  final def deriveFor[A]: DerivationHelper[A] =
-    circeSemiAuto.deriveConfiguredFor[A]
 }

@@ -27,6 +27,7 @@ import busymachines.pureharm.json.test._
   * @since 11
   *   Jun 2019
   */
+@scala.annotation.nowarn
 final class JsonDerivationNestedTypesTest1 extends JsonTest {
 
   private val outdoorMelon: OutdoorMelon = OutdoorMelons.WildMelon(
@@ -65,6 +66,7 @@ final class JsonDerivationNestedTypesTest1 extends JsonTest {
 
 }
 
+@scala.annotation.nowarn
 final class JsonDerivationNestedTypesTest2 extends JsonTest {
 
   private val outdoorMelon: OutdoorMelon = OutdoorMelons.WildMelon(

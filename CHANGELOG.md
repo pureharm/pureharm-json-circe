@@ -7,8 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # unreleased
 
+This is the first version available for Scala 3!
+
+### :warning: breaking changes :warning:
+- replaced `busymachines.pureharm.json.SemiAutoDerivation` w/ 
+    - `busymachines.pureharm.json.GenericSemiAutoDerivation` which uses circe derivation strategies from `circe-generic` module
+    - `busymachines.pureharm.json.GenericExtrasSemiAutoDerivation`, which is from start deprecated, and is equivalent to `SemiAutoDerivation`. Unfortunately, `circe-generic-extras` behavior that derived encoder/decoders for _sealed traits_ with the `_type` discriminator is _not available_ on Scala 3 at all! If you are on Scala 2 you can still use this method of deriving, but the deprecations will push you to _migrate_ to the behavior consistent w/ `GenericSemiAutoDerivation`. 
+      - :warning: Remember that this changes the shape of the JSON for _sealed traits_, and if you are in a position where you have to provide support for this shape, you have to do it by hand. Helpers for this will be added in future versions.
+      - :warning: this trait is a no-op `???` unimplemented stub on Scala 3!
+
+### dependency upgrades
+- [circe-generic](https://github.com/circe/circe/releases) `0.14.1`
+- [circe-generic-extras](https://github.com/circe/circe-generic-extras/releases) `0.14.1` — only for Scala 2. For Scala 3 this doesn't exist!
+
 ### internals
-- bump [munit-cats-effect](https://github.com/typelevel/munit-cats-effect/releases) to `1.0.5`
+- [pureharm-testkit](https://github.com/busymachines/pureharm-testkit/releases) `0.4.0`
 - bump scalafmt to `3.0.0-RC6` — from `2.7.5`
 - bump sbt to `1.5.5`
 - bump sbt-spiewak to `0.21.0`

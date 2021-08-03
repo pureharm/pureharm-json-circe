@@ -21,6 +21,7 @@ package busymachines.pureharm.json.test
   * @since 11
   *   Jun 2019
   */
+@scala.annotation.nowarn
 object jsonTestCodecs {
   import busymachines.pureharm.json._
 

@@ -64,7 +64,7 @@ trait AnomalyJsonCodec {
         Json.fromJsonObject(JsonObject.empty)
       }
       else {
-        val parametersJson = a.map { p: (String, Anomaly.Parameter) => (p._1, pureharmStringOrSeqEncoder(p._2)) }
+        val parametersJson = a.map((p: (String, Anomaly.Parameter)) => (p._1, pureharmStringOrSeqEncoder(p._2)))
         io.circe.Json.fromFields(parametersJson)
       }
 
@@ -72,8 +72,8 @@ trait AnomalyJsonCodec {
     (c: HCursor) => {
       val jsonObj = c.as[JsonObject]
       val m       = jsonObj.map(_.toMap)
-      val m2: Either[DecodingFailure, Either[DecodingFailure, Anomaly.Parameters]] = m.map { e: Map[String, Json] =>
-        val potentialFailures = e.map { p: (String, Json) => p._2.as[Anomaly.Parameter].map(s => (p._1, s)) }.toList
+      val m2: Either[DecodingFailure, Either[DecodingFailure, Anomaly.Parameters]] = m.map { (e: Map[String, Json]) =>
+        val potentialFailures = e.map((p: (String, Json)) => p._2.as[Anomaly.Parameter].map(s => (p._1, s))).toList
 
         if (potentialFailures.nonEmpty) {
           val first: Either[DecodingFailure, List[(String, Anomaly.Parameter)]] =

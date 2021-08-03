@@ -70,8 +70,7 @@ ThisBuild / spiewakMainBranches       := List("main")
 ThisBuild / Test / publishArtifact    := false
 
 ThisBuild / scalaVersion       := Scala213
-ThisBuild / crossScalaVersions := List(Scala213)
-// ThisBuild / crossScalaVersions := List(Scala213, Scala3)
+ThisBuild / crossScalaVersions := List(Scala213, Scala3)
 
 //required for binary compat checks
 ThisBuild / versionIntroduced := Map(
@@ -131,7 +130,6 @@ lazy val `json-circe` = crossProject(JVMPlatform, JSPlatform)
           // format: off
           "io.circe"            %%% "circe-core"                % circeV                     withSources(),
           "io.circe"            %%% "circe-parser"              % circeV                     withSources(),
-          "io.circe"            %%% "circe-generic"             % circeV                     withSources(),
           "com.busymachines"    %%% "pureharm-core-anomaly"     % pureharmCoreV              withSources(),
           "com.busymachines"    %%% "pureharm-core-sprout"      % pureharmCoreV              withSources(),
           "com.busymachines"    %%% "pureharm-testkit"          % pureharmTestkitV    % Test withSources(),

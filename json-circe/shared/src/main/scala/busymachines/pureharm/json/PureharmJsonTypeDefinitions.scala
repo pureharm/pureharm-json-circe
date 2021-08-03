@@ -41,9 +41,6 @@ trait PureharmJsonTypeDefinitions {
   final type Decoder[A] = io.circe.Decoder[A]
   final val Decoder: io.circe.Decoder.type = io.circe.Decoder
 
-  final type Configuration = io.circe.generic.extras.Configuration
-  final val Configuration: io.circe.generic.extras.Configuration.type = io.circe.generic.extras.Configuration
-
   final type Json       = io.circe.Json
   final type JsonObject = io.circe.JsonObject
 

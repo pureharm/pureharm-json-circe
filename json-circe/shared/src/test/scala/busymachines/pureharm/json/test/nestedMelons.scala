@@ -16,8 +16,10 @@
 
 package busymachines.pureharm.json.test
 
-/** @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 11 Jun 2019
+/** @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 11
+  *   Jun 2019
   */
 sealed private[test] trait OutdoorMelon
 

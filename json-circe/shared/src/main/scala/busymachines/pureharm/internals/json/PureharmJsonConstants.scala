@@ -16,8 +16,10 @@
 
 package busymachines.pureharm.internals.json
 
-/** @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 11 Jun 2019
+/** @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 11
+  *   Jun 2019
   */
 private[internals] object PureharmJsonConstants {
   private[internals] val id:         String = "id"

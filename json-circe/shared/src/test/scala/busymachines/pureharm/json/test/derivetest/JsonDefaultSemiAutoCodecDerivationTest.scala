@@ -26,8 +26,10 @@ import busymachines.pureharm.json.test._
   *
   * See the Melon hierarchy
   *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 11 Jun 2019
+  * @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 11
+  *   Jun 2019
   */
 final class JsonDefaultSemiAutoCodecDerivationTest extends JsonTest {
   import melonsDefaultSemiAutoCodecs._

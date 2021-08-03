@@ -18,8 +18,10 @@ package busymachines.pureharm.internals.json
 
 import io.circe._
 
-/** @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 11 Jun 2019
+/** @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 11
+  *   Jun 2019
   */
 object PureharmJsonSyntax {
 
@@ -43,6 +45,7 @@ object PureharmJsonSyntax {
   }
 
   final class DecoderOpsString(val rawJson: String) extends AnyVal {
+
     @scala.deprecated("Just use the safe version, and throw errors in user code. Will be removed in 0.3.0", "0.2.0")
     def unsafeAsJson: Json = JsonParsing.unsafeParseString(rawJson)
 

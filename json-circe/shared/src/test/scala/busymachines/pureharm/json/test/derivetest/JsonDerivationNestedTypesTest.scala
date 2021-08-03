@@ -22,8 +22,10 @@ import busymachines.pureharm.json._
 import busymachines.pureharm.json.implicits._
 import busymachines.pureharm.json.test._
 
-/** @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 11 Jun 2019
+/** @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 11
+  *   Jun 2019
   */
 final class JsonDerivationNestedTypesTest1 extends JsonTest {
 
@@ -72,8 +74,8 @@ final class JsonDerivationNestedTypesTest2 extends JsonTest {
 
   //-----------------------------------------------------------------------------------------------
   //moved outside of the test to avoid false positive of "implicit not used" warning
-  implicit protected val color:             Codec[OutdoorMelons.Color] = jsonTestCodecs.`OutdoorMelons.Color.enumerationCodec`
-  implicit protected val outdoorMelonCodec: Codec[OutdoorMelon]        = derive.codec[OutdoorMelon]
+  implicit protected val color: Codec[OutdoorMelons.Color] = jsonTestCodecs.`OutdoorMelons.Color.enumerationCodec`
+  implicit protected val outdoorMelonCodec: Codec[OutdoorMelon] = derive.codec[OutdoorMelon]
 
   test("... derive for case classes defined within objects — enumerationCodec") {
     for {

@@ -20,8 +20,10 @@ import cats.implicits._
 import busymachines.pureharm.sprout._
 import io.circe.{Decoder, Encoder}
 
-/** @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 12 Jun 2019
+/** @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 12
+  *   Jun 2019
   */
 object PureharmJsonInstances {
 

@@ -18,7 +18,9 @@ package busymachines.pureharm.json
 
 import busymachines.pureharm.internals.json.{PureharmJsonInstances, PureharmJsonSyntax}
 
-/** @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 11 Jun 2019
+/** @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 11
+  *   Jun 2019
   */
 trait PureharmJsonImplicits extends PureharmJsonSyntax.Implicits with PureharmJsonInstances.Implicits

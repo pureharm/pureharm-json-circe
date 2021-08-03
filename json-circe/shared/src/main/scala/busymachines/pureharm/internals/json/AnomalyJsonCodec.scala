@@ -16,16 +16,20 @@
 
 package busymachines.pureharm.internals.json
 
-/** @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 10 Jun 2019
+/** @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 10
+  *   Jun 2019
   */
 import busymachines.pureharm.anomaly._
 import cats.implicits._
 import io.circe.Decoder.Result
 import io.circe._
 
-/** @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 11 Jun 2019
+/** @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 11
+  *   Jun 2019
   */
 object AnomalyJsonCodec extends AnomalyJsonCodec
 

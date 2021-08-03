@@ -20,8 +20,10 @@ import busymachines.pureharm.anomaly._
 import cats.implicits._
 import io.circe._
 
-/** @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 11 Jun 2019
+/** @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 11
+  *   Jun 2019
   */
 object JsonDecoding {
 
@@ -54,8 +56,10 @@ final case class JsonDecodingAnomaly(msg: String) extends InvalidInputAnomaly(ms
   override val id: AnomalyID = JsonAnomalyIDs.JsonDecodingAnomalyID
 }
 
-/** @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 11 Jun 2019
+/** @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 11
+  *   Jun 2019
   */
 object JsonParsing {
 
@@ -86,8 +90,7 @@ final case class JsonParsingAnomaly(msg: String) extends InvalidInputAnomaly(msg
   override val id: AnomalyID = JsonAnomalyIDs.JsonParsingAnomalyID
 }
 
-/**
-  */
+/** */
 object JsonAnomalyIDs {
 
   private val ID1 = "json_01"

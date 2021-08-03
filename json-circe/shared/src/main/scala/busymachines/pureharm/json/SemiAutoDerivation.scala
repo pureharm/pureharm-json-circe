@@ -22,13 +22,13 @@ import io.circe.generic.extras.codec.ConfiguredAsObjectCodec
 import io.circe.generic.extras.{decoding, encoding, semiauto => circeSemiAuto}
 import shapeless.Lazy
 
-/** Code mostly gotten from:
-  * io.circe.generic.extras.semiauto.DerivationHelper,
-  * these are just aliases + some extra to help along the pureharm-style
-  * of doing work.
+/** Code mostly gotten from: io.circe.generic.extras.semiauto.DerivationHelper, these are just aliases + some extra to
+  * help along the pureharm-style of doing work.
   *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 11 Jun 2019
+  * @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 11
+  *   Jun 2019
   */
 trait SemiAutoDerivation {
   final type DerivationHelper[A] = io.circe.generic.extras.semiauto.DerivationHelper[A]

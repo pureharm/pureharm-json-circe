@@ -16,8 +16,10 @@
 
 package busymachines.pureharm.json.test
 
-/** @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 11 Jun 2019
+/** @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 11
+  *   Jun 2019
   */
 object jsonTestCodecs {
   import busymachines.pureharm.json._

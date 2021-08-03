@@ -21,8 +21,10 @@ import busymachines.pureharm.sprout._
 import busymachines.pureharm.effects.implicits._
 import cats.MonadError
 
-/** @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 12 Jun 2019
+/** @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 12
+  *   Jun 2019
   */
 package object test {
 

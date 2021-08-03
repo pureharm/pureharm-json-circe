@@ -16,8 +16,10 @@
 
 package busymachines.pureharm.json
 
-/** @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 11 Jun 2019
+/** @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 11
+  *   Jun 2019
   */
 object derive    extends SemiAutoDerivation
 object implicits extends PureharmJsonImplicits

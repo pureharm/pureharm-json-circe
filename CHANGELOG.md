@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # unreleased
 
+# 0.3.0-M1
+
 This is the first version available for Scala 3!
 
 ### :warning: breaking changes :warning:

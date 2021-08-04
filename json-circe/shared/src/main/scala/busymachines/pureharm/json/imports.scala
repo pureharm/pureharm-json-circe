@@ -16,8 +16,15 @@
 
 package busymachines.pureharm.json
 
-/** @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 11 Jun 2019
+/** @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 11
+  *   Jun 2019
   */
-object derive    extends SemiAutoDerivation
+@scala.deprecated(
+  "Use derived instead which DOES NOT SUPPORT deriving sealed traits w/ _type discriminator, since this feature is not available on Scala 3 + circe 0.14.1, so you have to manually migrate all codecs of sealed traits to not break your pre-existing JSON in APIs and DBs. Good luck.",
+  "0.3.0",
+)
+object derive    extends GenericExtrasSemiAutoDerivation
+object derived   extends GenericSemiAutoDerivation
 object implicits extends PureharmJsonImplicits

@@ -18,40 +18,35 @@ package busymachines.pureharm.json.test.derivetest
 
 import busymachines.pureharm.effects._
 import busymachines.pureharm.effects.implicits._
+
 import busymachines.pureharm.json.implicits._
 import busymachines.pureharm.json.test._
 
-/** Here we test busymachines.pureharm.json.Decoder derivation
+/** Here we test busymachines.pureharm.json.Codec derivation
   *
   * See the Melon hierarchy
   *
-  * @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 11 Jun 2019
+  * @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 11
+  *   Jun 2019
   */
-final class JsonDefaultSemiAutoDecoderDerivationTest extends JsonTest {
-  import melonsDefaultSemiAutoDecoders._
-
+final class JsonDefaultSemiAutoCodecDerivationTest extends JsonTest {
+  import melonsDefaultSemiAutoCodecs._
   //-----------------------------------------------------------------------------------------------
 
-  test("... be able to deserialize anarchist melon (i.e. not part of any hierarchy)") {
+  test("... be able to serialize/deserialize anarchist melon (i.e. not part of any hierarchy)") {
     for {
       anarchistMelon <- AnarchistMelon(noGods = true, noMasters = true, noSuperTypes = true).pure[IO]
-      rawJson =
-        """
-          |{
-          |  "noGods" : true,
-          |  "noMasters" : true,
-          |  "noSuperTypes" : true
-          |}
-      """.stripMargin.trim
-
-      read <- rawJson.decodeAs[AnarchistMelon].liftTo[IO]
+      asJson = anarchistMelon.asJson.spaces2
+      read <- asJson.decodeAs[AnarchistMelon].liftTo[IO]
     } yield assertEquals(obtained = read, expected = anarchistMelon)
+
   }
 
   //-----------------------------------------------------------------------------------------------
 
-  test("... fail to compile when there is no explicitly defined decoder for a type down)the hierarchy") {
+  test("... fail to compile when there is no explicitly defined codec for a type down)the hierarchy") {
     IO {
       val errors = compileErrors(
         """
@@ -74,19 +69,11 @@ final class JsonDefaultSemiAutoDecoderDerivationTest extends JsonTest {
 
   //-----------------------------------------------------------------------------------------------
 
-  test("... be able to deserialize case class from hierarchy when it is referred to as its super-type") {
+  test("... be able to serialize/deserialize a case class from hierarchy when it is referred to as its super-type") {
     for {
       winterMelon <- WinterMelon(fuzzy = true, weight = 45).pure[IO].widen[Melon]
-      rawJson =
-        """
-          |{
-          |  "fuzzy" : true,
-          |  "weight" : 45,
-          |  "_type" : "WinterMelon"
-          |}
-      """.stripMargin.trim
-
-      read <- rawJson.decodeAs[Melon].liftTo[IO]
+      asJson = winterMelon.asJson.spaces2
+      read <- asJson.decodeAs[Melon].liftTo[IO]
     } yield assertEquals(obtained = read, expected = winterMelon)
   }
 
@@ -95,14 +82,8 @@ final class JsonDefaultSemiAutoDecoderDerivationTest extends JsonTest {
   test("... be able to deserialize case objects of the hierarchy") {
     for {
       smallMelon <- SmallMelon.pure[IO].widen[Melon]
-      rawJson =
-        """
-          |{
-          |  "_type" : "SmallMelon"
-          |}
-      """.stripMargin.trim
-
-      read <- rawJson.decodeAs[Melon].liftTo[IO]
+      asJson = smallMelon.asJson.spaces2
+      read <- asJson.decodeAs[Melon].liftTo[IO]
     } yield assertEquals(obtained = read, expected = smallMelon)
   }
 
@@ -111,15 +92,8 @@ final class JsonDefaultSemiAutoDecoderDerivationTest extends JsonTest {
   test("... deserialize hierarchies of case objects as enums (i.e. plain strings)") {
     for {
       taste <- List(SweetTaste, SourTaste).pure[IO].widen[List[Taste]]
-      rawJson =
-        """
-          |[
-          |  "SweetTaste",
-          |  "SourTaste"
-          |]
-      """.stripMargin.trim
-
-      read <- rawJson.decodeAs[List[Taste]].liftTo[IO]
+      asJson = taste.asJson.spaces2
+      read <- asJson.decodeAs[List[Taste]].liftTo[IO]
     } yield assertEquals(obtained = read, expected = taste)
   }
 
@@ -131,38 +105,9 @@ final class JsonDefaultSemiAutoDecoderDerivationTest extends JsonTest {
       waterMelon  <- WaterMelon(seeds = true, weight = 90).pure[IO].widen[Melon]
       smallMelon  <- SmallMelon.pure[IO].widen[Melon]
       squareMelon <- SquareMelon(weight = 10, tastes = Seq(SourTaste, SweetTaste)).pure[IO].widen[Melon]
-      melons      <- List[Melon](winterMelon, waterMelon, smallMelon, squareMelon).pure[IO]
-
-      rawJson =
-        """
-          |
-          |[
-          |  {
-          |    "fuzzy" : true,
-          |    "weight" : 45,
-          |    "_type" : "WinterMelon"
-          |  },
-          |  {
-          |    "seeds" : true,
-          |    "weight" : 90,
-          |    "_type" : "WaterMelon"
-          |  },
-          |  {
-          |    "_type" : "SmallMelon"
-          |  },
-          |  {
-          |    "weight" : 10,
-          |    "tastes" : [
-          |      "SourTaste",
-          |      "SweetTaste"
-          |    ],
-          |    "_type" : "SquareMelon"
-          |  }
-          |]
-          |
-        """.stripMargin.trim
-
-      read <- rawJson.decodeAs[List[Melon]].liftTo[IO]
+      melons = List[Melon](winterMelon, waterMelon, smallMelon, squareMelon)
+      asJson = melons.asJson.spaces2
+      read <- asJson.decodeAs[List[Melon]].liftTo[IO]
     } yield assertEquals(obtained = read, expected = melons)
   }
 

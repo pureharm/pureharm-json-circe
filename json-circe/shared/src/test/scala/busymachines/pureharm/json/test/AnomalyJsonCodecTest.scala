@@ -20,8 +20,10 @@ import busymachines.pureharm.anomaly._
 import busymachines.pureharm.effects._
 import busymachines.pureharm.effects.implicits._
 
-/** @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 11 Jun 2019
+/** @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 11
+  *   Jun 2019
   */
 final class AnomalyJsonCodecTest extends JsonTest {
 

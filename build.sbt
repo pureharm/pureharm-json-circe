@@ -18,12 +18,12 @@
 //============================== build details ================================
 //=============================================================================
 
-addCommandAlias("github-gen", "githubWorkflowGenerate")
-addCommandAlias("github-check", "githubWorkflowCheck")
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
-val Scala213  = "2.13.5"
-val Scala3RC1 = "3.0.0-RC1"
+// format: off
+val Scala213        = "2.13.6"
+val Scala3          = "3.0.1"
+// format: on
 
 //=============================================================================
 //============================ publishing details =============================
@@ -32,10 +32,10 @@ val Scala3RC1 = "3.0.0-RC1"
 //see: https://github.com/xerial/sbt-sonatype#buildsbt
 ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
 
-ThisBuild / baseVersion  := "0.2"
-ThisBuild / organization := "com.busymachines"
+ThisBuild / baseVersion      := "0.3"
+ThisBuild / organization     := "com.busymachines"
 ThisBuild / organizationName := "BusyMachines"
-ThisBuild / homepage     := Option(url("https://github.com/busymachines/pureharm-json-circe"))
+ThisBuild / homepage         := Option(url("https://github.com/busymachines/pureharm-json-circe"))
 
 ThisBuild / scmInfo := Option(
   ScmInfo(
@@ -44,8 +44,8 @@ ThisBuild / scmInfo := Option(
   )
 )
 
-/** I want my email. So I put this here. To reduce a few lines of code,
-  * the sbt-spiewak plugin generates this (except email) from these two settings:
+/** I want my email. So I put this here. To reduce a few lines of code, the sbt-spiewak plugin generates this (except
+  * email) from these two settings:
   * {{{
   * ThisBuild / publishFullName   := "Loránd Szakács"
   * ThisBuild / publishGithubUser := "lorandszakacs"
@@ -60,7 +60,7 @@ ThisBuild / developers := List(
   )
 )
 
-ThisBuild / startYear := Some(2019)
+ThisBuild / startYear  := Some(2019)
 ThisBuild / licenses   := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
 
 //until we get to 1.0.0, we keep strictSemVer false
@@ -70,12 +70,12 @@ ThisBuild / spiewakMainBranches       := List("main")
 ThisBuild / Test / publishArtifact    := false
 
 ThisBuild / scalaVersion       := Scala213
-ThisBuild / crossScalaVersions := List(Scala213)//List(Scala213, Scala3RC1)
+ThisBuild / crossScalaVersions := List(Scala213, Scala3)
 
 //required for binary compat checks
 ThisBuild / versionIntroduced := Map(
-  Scala213  -> "0.1.0",
-  Scala3RC1 -> "0.1.0",
+  Scala213 -> "0.1.0",
+  Scala3   -> "0.3.0",
 )
 
 //=============================================================================
@@ -83,12 +83,14 @@ ThisBuild / versionIntroduced := Map(
 //=============================================================================
 ThisBuild / resolvers += Resolver.sonatypeRepo("releases")
 ThisBuild / resolvers += Resolver.sonatypeRepo("snapshots")
+
 // format: off
-val pureharmCoreV       = "0.2.0"       //https://github.com/busymachines/pureharm-core/releases
-val circeV              = "0.13.0"      //https://github.com/circe/circe/releases
-val pureharmTestkitV    = "0.2.0"       //https://github.com/busymachines/pureharm-testkit/releases
-val log4catsV           = "1.2.2"       //https://github.com/typelevel/log4cats/releases
+val pureharmCoreV       = "0.3.0"       //https://github.com/busymachines/pureharm-core/releases
+val circeV              = "0.14.1"      //https://github.com/circe/circe/releases
+val pureharmTestkitV    = "0.4.0"       //https://github.com/busymachines/pureharm-testkit/releases
+val log4catsV           = "2.1.1"       //https://github.com/typelevel/log4cats/releases
 // format: on
+
 //=============================================================================
 //============================== Project details ==============================
 //=============================================================================
@@ -105,19 +107,36 @@ lazy val root = project
 
 lazy val `json-circe` = crossProject(JVMPlatform, JSPlatform)
   .settings(commonSettings)
-
   .settings(
     name := "pureharm-json-circe",
-    libraryDependencies ++= Seq(
-      "io.circe" %%% "circe-core"           % circeV withSources (),
-      "io.circe" %%% "circe-generic-extras" % circeV withSources (),
-      "io.circe" %%% "circe-parser"         % circeV withSources (),
-      "com.busymachines" %%% "pureharm-core-anomaly" % pureharmCoreV withSources(),
-      "com.busymachines" %%% "pureharm-core-sprout" % pureharmCoreV withSources(),
-
-      "com.busymachines" %%% "pureharm-testkit" % pureharmTestkitV % Test withSources(),
-      "org.typelevel" %%% "log4cats-noop" % log4catsV % Test withSources(),
-    ),
+    libraryDependencies ++= (CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((2, _)) =>
+        Seq(
+          // on Scala 2 we have circe-generic-extras to give us that _type discriminator
+          // format: off
+          "io.circe"            %%% "circe-core"                % circeV                     withSources(),
+          "io.circe"            %%% "circe-parser"              % circeV                     withSources(),
+          "io.circe"            %%% "circe-generic"             % circeV                     withSources(),
+          "io.circe"            %%% "circe-generic-extras"      % circeV                     withSources(),
+          "com.busymachines"    %%% "pureharm-core-anomaly"     % pureharmCoreV              withSources(),
+          "com.busymachines"    %%% "pureharm-core-sprout"      % pureharmCoreV              withSources(),
+          "com.busymachines"    %%% "pureharm-testkit"          % pureharmTestkitV    % Test withSources(),
+          "org.typelevel"       %%% "log4cats-noop"             % log4catsV           % Test withSources(),
+          // format: on
+        )
+      case _            =>
+        //in Scala 3 we have no circe-generic-extras
+        Seq(
+          // format: off
+          "io.circe"            %%% "circe-core"                % circeV                     withSources(),
+          "io.circe"            %%% "circe-parser"              % circeV                     withSources(),
+          "com.busymachines"    %%% "pureharm-core-anomaly"     % pureharmCoreV              withSources(),
+          "com.busymachines"    %%% "pureharm-core-sprout"      % pureharmCoreV              withSources(),
+          "com.busymachines"    %%% "pureharm-testkit"          % pureharmTestkitV    % Test withSources(),
+          "org.typelevel"       %%% "log4cats-noop"             % log4catsV           % Test withSources(),
+          // format: on
+        )
+    }),
   )
 
 lazy val `json-circeJVM` = `json-circe`.jvm.settings(
@@ -125,30 +144,24 @@ lazy val `json-circeJVM` = `json-circe`.jvm.settings(
 )
 
 lazy val `json-circeJS` = `json-circe`
-   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
-   .jsSettings(
-      scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule))
-    )
-    .js
+  .jsSettings(
+    scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule))
+  )
+  .js
 
 //=============================================================================
 //================================= Settings ==================================
 //=============================================================================
 
 lazy val commonSettings = Seq(
-  //required for munit: https://scalameta.org/munit/docs/getting-started.html
-  testFrameworks += new TestFramework("munit.Framework"),
-
-  Compile / unmanagedSourceDirectories ++= {
-    val major = if (isDotty.value) "-3" else "-2"
-    List(CrossType.Pure, CrossType.Full).flatMap(
-      _.sharedSrcDir(baseDirectory.value, "main").toList.map(f => file(f.getPath + major))
-    )
-  },
-  Test / unmanagedSourceDirectories ++= {
-    val major = if (isDotty.value) "-3" else "-2"
-    List(CrossType.Pure, CrossType.Full).flatMap(
-      _.sharedSrcDir(baseDirectory.value, "test").toList.map(f => file(f.getPath + major))
-    )
-  },
+  scalacOptions ++= scalaCompilerOptions(scalaVersion.value)
 )
+
+def scalaCompilerOptions(scalaVersion: String): Seq[String] =
+  CrossVersion.partialVersion(scalaVersion) match {
+    case Some((2, _)) =>
+      Seq[String](
+        //"-Xsource:3"
+      )
+    case _            => Seq.empty[String]
+  }

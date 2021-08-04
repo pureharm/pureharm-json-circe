@@ -16,13 +16,26 @@
 
 package busymachines.pureharm.json.test
 
-/** @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 11 Jun 2019
+/** @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 11
+  *   Jun 2019
   */
-object jsonTestCodecs {
-  import busymachines.pureharm.json._
+sealed private[test] trait OutdoorMelon
 
-  val `OutdoorMelons.Color.codec`:            Codec[OutdoorMelons.Color] = derive.codec[OutdoorMelons.Color]
-  val `OutdoorMelons.Color.enumerationCodec`: Codec[OutdoorMelons.Color] = derive.enumerationCodec[OutdoorMelons.Color]
+private[test] object OutdoorMelons {
+
+  sealed trait Color
+
+  object Colors {
+
+    case object Green extends Color
+
+  }
+
+  case class WildMelon(
+    weight: Int,
+    color:  Color,
+  ) extends OutdoorMelon
 
 }

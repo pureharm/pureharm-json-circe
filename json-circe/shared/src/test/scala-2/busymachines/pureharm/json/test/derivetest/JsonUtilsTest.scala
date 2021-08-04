@@ -22,8 +22,10 @@ import busymachines.pureharm.json._
 import busymachines.pureharm.internals.json.{JsonDecoding, JsonParsing}
 import busymachines.pureharm.json.test._
 
-/** @author Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 11 Jun 2019
+/** @author
+  *   Lorand Szakacs, https://github.com/lorandszakacs
+  * @since 11
+  *   Jun 2019
   */
 final class JsonUtilsTest extends JsonTest {
 

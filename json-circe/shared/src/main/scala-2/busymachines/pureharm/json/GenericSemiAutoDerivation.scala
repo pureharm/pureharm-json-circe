@@ -16,11 +16,18 @@
 
 package busymachines.pureharm.json
 
-import busymachines.pureharm.internals.json.{PureharmJsonInstances, PureharmJsonSyntax}
+import io.circe.generic.decoding
+import io.circe.generic.encoding
+import io.circe.generic.{codec => circeCodec}
+import shapeless.Lazy
 
-/** @author
-  *   Lorand Szakacs, https://github.com/lorandszakacs
-  * @since 11
-  *   Jun 2019
+/** Simple forwarders from io.circe.generic.semiauto, useful for custom implicit messages and better UX.
   */
-trait PureharmJsonImplicits extends PureharmJsonSyntax.Implicits with PureharmJsonInstances.Implicits
+trait GenericSemiAutoDerivation {
+  final def decoder[A](implicit decode: Lazy[decoding.DerivedDecoder[A]]): Decoder[A] = decode.value
+
+  final def encoder[A](implicit encode: Lazy[encoding.DerivedAsObjectEncoder[A]]): Encoder.AsObject[A] =
+    encode.value
+
+  final def codec[A](implicit codec: Lazy[circeCodec.DerivedAsObjectCodec[A]]): Codec.AsObject[A] = codec.value
+}
